@@ -1,0 +1,198 @@
+/* Estilo general para la página del perfil */
+body, html {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+.user-profile-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Asegura que el contenedor ocupe toda la altura de la pantalla */
+  font-family: 'Arial', sans-serif;
+}
+
+/* Contenido principal toma todo el espacio */
+.user-profile-container > * {
+  flex-grow: 1;
+}
+
+/* Footer siempre al fondo */
+footer {
+  background-color: #1a1919;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  font-size: 0.9rem;
+  flex-shrink: 0; /* Evita que el footer se reduzca */
+}
+
+/* Banner en la parte superior del perfil */
+.profile-banner {
+  background: linear-gradient(90deg, #47b3b3, #003366);
+  color: white;
+  padding: 20px 10px;
+  text-align: center;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-banner h1 {
+  margin: 0;
+  font-size: 3rem;
+  letter-spacing: 1.5px;
+}
+
+/* Sección del perfil con imagen y detalles */
+.profile-section {
+  display: flex;
+  align-items:baseline;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  justify-content: baseline; /* Alineamos la sección */
+  padding: 2%;
+}
+
+.profile-picture img {
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  margin-right: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.profile-picture img:hover {
+  transform: scale(1.05);
+}
+
+.profile-info h2 {
+  font-size: 2.5rem;
+  margin: 0;
+  color: #333;
+}
+
+.profile-info p {
+  font-size: 1.2rem;
+  color: #555;
+  margin-top: 10px;
+}
+
+/* Estilo del Dashboard */
+.dashboard {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard h2 {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Estilo para la lista de cursos */
+.cursos-list {
+  display: grid; /* Usar grid para un diseño uniforme */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 3 tarjetas en una fila */
+  gap: 20px; /* Espaciado entre tarjetas */
+  padding: 20px; /* Espaciado interno */
+}
+
+/* Estilo para cada curso en la lista */
+.cursos-list li {
+  cursor: pointer;
+  background: linear-gradient(135deg, #6a82fb 0%, #fc5c7d 100%); /* Fondo de las tarjetas */
+  border-radius: 10px;
+  padding: 20px;
+  color: white; /* Color del texto */
+  text-align: center;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Animación al pasar el mouse */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  height: 200px; /* Altura fija para uniformidad */
+}
+
+/* Efecto al pasar el mouse */
+.cursos-list li:hover {
+  transform: scale(1.03); /* Efecto de aumento al pasar el mouse */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Sombra más fuerte al pasar el mouse */
+}
+
+/* Estilo para el botón de Cerrar Sesión */
+.btn-logout {
+  background-color: #11acc7;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.btn-logout:hover {
+  background-color: #c0392b;
+}
+
+/* Ajuste de alineación para el header */
+.profile-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Media Queries para diferentes tamaños de pantalla */
+@media (max-width: 768px) {
+  .profile-banner h1 {
+      font-size: 2.2rem;
+  }
+
+  .profile-picture img {
+      width: 120px;
+      height: 120px;
+  }
+
+  .profile-info h2 {
+      font-size: 1.8rem;
+  }
+
+  .profile-info p {
+      font-size: 1.1rem;
+  }
+
+  .cursos-list {
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* 2 por fila en pantallas pequeñas */
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-banner h1 {
+      font-size: 1.8rem;
+  }
+
+  .profile-section {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+  }
+
+  .profile-picture img {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 15px;
+      margin-right: 0;
+  }
+
+  .profile-info h2 {
+      font-size: 1.5rem;
+  }
+
+  .profile-info p {
+      font-size: 1rem;
+  }
+
+  .cursos-list {
+      grid-template-columns: 1fr; /* 1 por fila en pantallas muy pequeñas */
+  }
+}

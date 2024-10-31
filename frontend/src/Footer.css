@@ -1,0 +1,75 @@
+/* Estilo general del footer */
+.footer {
+  background-color: #1a1919;
+  padding: 25px;
+  text-align: center;
+  color: #fff;
+  border-top: 3px solid #333; /* Línea de separación superior */
+  font-family: 'Arial', sans-serif;
+}
+
+.footer .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+.footer p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #ccc; /* Color del texto del footer */
+}
+
+/* Estilo de los enlaces de redes sociales */
+.footer .social-links {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 20px; /* Espaciado entre íconos */
+  flex-wrap: wrap;
+}
+
+.footer .social-links a {
+  margin: 0 10px; /* Ajuste para espaciar íconos de forma uniforme */
+}
+
+.footer .social-links img {
+  width: 80px; /* Tamaño mejorado para una visualización inicial equilibrada */
+  height: 80px;
+  border-radius: 50%; /* Hace que los íconos sean circulares */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Animación suave */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3); /* Sombra para destacar los íconos */
+}
+
+.footer .social-links a:hover img {
+  transform: scale(1.15); /* Aumenta ligeramente el tamaño del icono al hacer hover */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.4); /* Mejora la sombra en hover */
+}
+
+/* Media query para pantallas medianas (tablets) */
+@media (max-width: 768px) {
+  .footer {
+    padding: 20px;
+  }
+
+  .footer .social-links img {
+    width: 70px; /* Tamaño ajustado para tablets */
+    height: 70px;
+  }
+
+  .footer .social-links a {
+    margin: 8px;
+  }
+}
+
+/* Media query para pantallas pequeñas (teléfonos móviles) */
+@media (max-width: 480px) {
+  .footer .social-links img {
+    width: 60px; /* Tamaño ajustado para pantallas pequeñas */
+    height: 60px;
+  }
+
+  .footer .social-links a {
+    margin: 5px;
+  }
+}

@@ -1,0 +1,159 @@
+/* Estilos generales para la página */
+.portfolio-container {
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4e2d9;
+  }
+  
+  /* Estilos para el encabezado */
+  .portfolio-header {
+    text-align: center;
+    margin-bottom: 20px;
+    background-color: #f7dbba; /* Fondo gris claro */
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  /* Estilo del título en el encabezado */
+  .portfolio-header h1 {
+    color: #333;
+    margin: 0;
+  }
+  
+  /* Estilos para el contenido principal */
+  .portfolio-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  /* Estilos para la sección de portafolio */
+  .portfolio-section {
+    width: 100%;
+    max-width: 1200px;
+    background-color: #f3e5e5; /* Fondo gris claro */
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+  }
+  
+  /* Estilo del título en la sección de portafolio */
+  .portfolio-section h2 {
+    color: #333;
+    margin-top: 0;
+  }
+  
+  /* Estilos para la cuadrícula de proyectos */
+  .portfolio-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  /* Estilos para los elementos del portafolio */
+  .portfolio-item {
+    flex: 1 1 300px;
+    max-width: 300px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    background-color: white;
+  }
+  
+  /* Estilo de la imagen del proyecto */
+  .portfolio-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  /* Estilo de la descripción del proyecto */
+  .portfolio-description {
+    padding: 15px;
+  }
+  
+  .portfolio-description h3 {
+    margin: 0;
+    color: #007bff;
+  }
+  
+  .portfolio-description p {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Botones de edición y eliminación */
+  .edit-button, .delete-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    margin-right: 8px;
+    cursor: pointer;
+  }
+  
+  .delete-button {
+    background-color: #dc3545;
+  }
+  
+  .edit-button:hover, .delete-button:hover {
+    opacity: 0.8;
+  }
+  
+  /* Sección de agregar proyecto */
+  .add-project-section {
+    width: 100%;
+    max-width: 600px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+  }
+  
+  .add-project-section h2 {
+    margin-top: 0;
+    color: #007bff;
+  }
+  
+  /* Estilos para campos de entrada y botones */
+  .input-field, .file-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 15px;
+  }
+  
+  .input-field {
+    font-size: 16px;
+  }
+  
+  .file-input {
+    padding: 5px;
+  }
+  
+  .submit-button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  
+  .submit-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Estilo de la vista previa de la imagen */
+  .preview-image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+  }
+  

@@ -1,0 +1,135 @@
+/* Estilos generales */
+body {
+  font-family: 'Open Sans', sans-serif;
+  background-color: #fbf9f8; /* Color de fondo del contenedor */
+}
+
+/* Contenedor principal */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+}
+
+/* Encabezado */
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #5a4860; /* Color de fondo del encabezado */
+  color: rgb(244, 241, 241);
+  padding: 20px; /* Espaciado dentro del encabezado */
+}
+
+.home-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: white; /* Color blanco para el título */
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: #d2dae2; /* Color del subtítulo */
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.header-right .btn-logout {
+  background-color: rgb(220, 53, 69); /* Color de fondo del botón de cerrar sesión */
+  border: none;
+  padding: 10px 15px;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 20px; /* Espaciado entre el nombre y el botón */
+}
+
+.header-right .btn-logout:hover {
+  background-color: rgb(177, 38, 54); /* Color al pasar el mouse */
+}
+
+/* Botones principales */
+.buttons-container {
+  display: flex;
+  flex-wrap: wrap; /* Permite que los botones se envuelvan */
+  margin: 20px;
+  width: auto; /* Deja que ocupe el espacio necesario */
+}
+
+.buttons-container .btn {
+  background-color: #3d4852; /* Color base de los botones */
+  color: white;
+  border: none;
+  padding: 10px;
+  margin-right: 10px; /* Espaciado entre los botones */
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.buttons-container .btn:hover {
+  background-color: #0056b3; /* Color al pasar el mouse */
+}
+
+/* Sección de contenido */
+.content-section {
+  flex: 1;
+  padding: 20px;
+}
+
+.cursos-list {
+  display: grid; /* Usar grid para un diseño uniforme */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 3 tarjetas en una fila */
+  gap: 20px; /* Espaciado entre tarjetas */
+  padding: 20px; /* Espaciado interno */
+}
+
+.curso-card {
+  background: linear-gradient(135deg, #6a82fb 0%, #fc5c7d 100%); /* Fondo de las tarjetas */
+  border: none;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  color: white; /* Color del texto */
+  text-align: center;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Animación al pasar el mouse */
+}
+
+.curso-card:hover {
+  transform: scale(1.03); /* Efecto de aumento al pasar el mouse */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Sombra más fuerte al pasar el mouse */
+}
+
+.progress-bar {
+  height: 10px;
+  width: 100%;
+  background-color: #ddd;
+  border-radius: 5px;
+  margin: 5px 0;
+}
+
+.progress {
+  height: 100%;
+  background-color: #4caf50;
+  border-radius: 5px;
+}
+
+/* Media Queries para pantallas pequeñas */
+@media (max-width: 768px) {
+  .home-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .buttons-container {
+    width: 100%;
+    justify-content: center; /* Centra los botones en pantallas pequeñas */
+  }
+
+  .cursos-grid {
+    grid-template-columns: 1fr; /* Ajusta el diseño a una columna en pantallas pequeñas */
+  }
+}
