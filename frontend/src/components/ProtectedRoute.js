@@ -1,9 +1,16 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
-const ProtectedRoute = ({ usuario, children }) => {
-  // Verifica si el usuario está autenticado
-  return usuario ? children : <Navigate to="/login" />;
+const ProtectedRoute = ({ children, requiredRole }) => {
+  const token = localStorage.getItem('token');
+  const tipoUsuario = localStorage.getItem('tipo_usuario_id');
+
+  
+  if (!token || (requiredRole && tipoUsuario !== requiredRole)) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
 };
 
 export default ProtectedRoute;

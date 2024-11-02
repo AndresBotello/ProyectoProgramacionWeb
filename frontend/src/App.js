@@ -15,11 +15,12 @@ import CourseCreate from './components/CourseCreate';
 import CourseList from './components/CourseList';
 import EditCourse from './components/EditCourse';
 
+
 function App() {
   const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUser = () => {
       const tipoUsuario = localStorage.getItem('tipo_usuario_id');
       const nombreUsuario = localStorage.getItem('nombre');
 
@@ -34,14 +35,14 @@ function App() {
   }, []);
 
   const handleLogin = (user) => {
-    setUsuario(user); // Establece el usuario en el estado
+    setUsuario(user);
   };
 
   const handleLogout = async () => {
     try {
       await fetch('/api/logout', { method: 'GET', credentials: 'include' });
-      setUsuario(null); // Elimina el usuario del estado
-      localStorage.clear(); // Limpiar localStorage al cerrar sesión
+      setUsuario(null);
+      localStorage.clear();
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }
@@ -52,48 +53,56 @@ function App() {
       <div>
         <Routes>
           <Route path="/" element={<Inicio />} />
-          <Route path="/home" element={usuario ? <Home usuario={usuario} onLogout={handleLogout} /> : <Home />} />
+          <Route path="/home" element={<Home usuario={usuario} onLogout={handleLogout} />} />
+          
           <Route path="/servicios" element={
             <ProtectedRoute usuario={usuario}>
               <Servicios />
             </ProtectedRoute>
           } />
+
           <Route path="/crear-curso" element={
-            <ProtectedRoute usuario={usuario}>
-               <CourseCreate />
-           </ProtectedRoute>
+            <ProtectedRoute usuario={usuario} requiredRole="2">
+              <CourseCreate />
+            </ProtectedRoute>
           } />
+
           <Route path="/portafolio" element={
             <ProtectedRoute usuario={usuario}>
               <Portafolio />
             </ProtectedRoute>
           } />
-          {/* Aseguramos que la ruta de editar curso incluya el ID del curso */}
+
           <Route path="/cursos/editar/:courseId" element={
-            <ProtectedRoute usuario={usuario}>
+            <ProtectedRoute usuario={usuario} requiredRole="2">
               <EditCourse />
             </ProtectedRoute>
           } />
+
           <Route path="/lista-cursos" element={
-            <ProtectedRoute usuario={usuario}>
+            <ProtectedRoute usuario={usuario} requiredRole="2">
               <CourseList />
             </ProtectedRoute>
           } />
+
           <Route path="/user-access" element={
             <ProtectedRoute usuario={usuario}>
               <UserAccessForm />
             </ProtectedRoute>
           } />
+
           <Route path="/user-management" element={
-            <ProtectedRoute usuario={usuario}>
+            <ProtectedRoute usuario={usuario} requiredRole="2">
               <UserManagement />
             </ProtectedRoute>
           } />
+
           <Route path="/cursos/:courseId" element={
             <ProtectedRoute usuario={usuario}>
               <CourseDetail />
             </ProtectedRoute>
           } />
+
           <Route path="/login" element={<Loguin onLogin={handleLogin} />} />
         </Routes>
       </div>

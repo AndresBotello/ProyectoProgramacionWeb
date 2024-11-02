@@ -114,9 +114,9 @@ footer {
   height: 200px; /* Altura fija para uniformidad */
 }
 
-/* Efecto al pasar el mouse */
+
 .cursos-list li:hover {
-  transform: scale(1.03); /* Efecto de aumento al pasar el mouse */
+  transform: scale(1.03); 
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Sombra más fuerte al pasar el mouse */
 }
 
@@ -193,6 +193,6 @@ footer {
   }
 
   .cursos-list {
-      grid-template-columns: 1fr; /* 1 por fila en pantallas muy pequeñas */
+      grid-template-columns: 1fr; 
   }
 }

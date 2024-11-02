@@ -26,60 +26,54 @@ const Loguin = ({ onLogin }) => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null); // Estado para el mensaje de éxito
+  const [successMessage, setSuccessMessage] = useState(null); 
   const navigate = useNavigate();
 
   const functAutenticacion = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setSuccessMessage(null); // Resetear el mensaje de éxito
+    setSuccessMessage(null);
 
     try {
-        const url = registrando 
-            ? 'http://localhost:3000/api/usuarios' 
-            : 'http://localhost:3000/api/usuarios/login';
+      const url = registrando 
+        ? 'http://localhost:3000/api/usuarios' 
+        : 'http://localhost:3000/api/usuarios/login';
 
-        const bodyData = registrando 
-            ? { nombre, correo: email, contrasena: password, tipo_usuario_id: 1 } // Establecer tipo_usuario_id a 1
-            : { correo: email, contrasena: password };
+      const bodyData = registrando 
+        ? { nombre, correo: email, contrasena: password, tipo_usuario_id: 1 }
+        : { correo: email, contrasena: password };
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(bodyData),
-        });
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData),
+      });
 
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.message || "Error en la autenticación");
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Error en la autenticación");
 
-        if (registrando) {
-            // Mostrar mensaje de éxito y redirigir a la página de loguin
-            setSuccessMessage("Usuario registrado correctamente");
-            setTimeout(() => {
-                setRegistrando(false); // Cambiar a modo "iniciar sesión"
-            }, 2000); // Espera 2 segundos antes de cambiar a la pantalla de loguin
+      if (registrando) {
+        setSuccessMessage("Usuario registrado correctamente");
+        setTimeout(() => setRegistrando(false), 2000);
+      } else {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('nombre', data.nombre);
+        localStorage.setItem('tipo_usuario_id', data.tipo_usuario_id);
+        onLogin(data);
+
+        if (data.tipo_usuario_id === 2) {
+          navigate('/home');  
         } else {
-            // Guardar token, nombre y tipo de usuario en localStorage
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('nombre', data.nombre);
-            localStorage.setItem('tipo_usuario_id', data.tipo_usuario_id); // Almacenar el tipo de usuario
-
-            onLogin(data);  // Actualizar estado global de autenticación
-
-            // Validar si el usuario es administrador (tipo_usuario_id === 2)
-            if (data.tipo_usuario_id === 2) {
-                navigate('/home');  // Redirigir al home si es administrador
-            } else {
-                navigate('/user-access');  // Redirigir al formulario de acceso a los cursos si es usuario normal
-            }        
-        }
+          navigate('/user-access');  
+        }        
+      }
     } catch (error) {
-        setError(error.message || "Correo o contraseña incorrectos");
+      setError(error.message || "Correo o contraseña incorrectos");
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
   return (
     <div className="loguin-container">
@@ -92,7 +86,7 @@ const Loguin = ({ onLogin }) => {
         <div className="form-box">
           <h2>{registrando ? "Regístrate" : "Inicia Sesión"}</h2>
           {error && <p className="error-message">{error}</p>}
-          {successMessage && <p className="success-message">{successMessage}</p>} {/* Mostrar mensaje de éxito */}
+          {successMessage && <p className="success-message">{successMessage}</p>}
           <form onSubmit={functAutenticacion}>
             {registrando && (
               <input 
@@ -112,22 +106,23 @@ const Loguin = ({ onLogin }) => {
               onChange={(e) => setEmail(e.target.value)} 
               required 
             />
-            <input 
-              type={showPassword ? 'text' : 'password'} 
-              placeholder="Contraseña" 
-              className="input-field" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              required 
-            />
-            <label className="checkbox-label">
+            <div className="password-field">
               <input 
-                type="checkbox" 
-                checked={showPassword} 
-                onChange={() => setShowPassword(!showPassword)} 
+                type={showPassword ? 'text' : 'password'} 
+                placeholder="Contraseña" 
+                className="input-field" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                required 
               />
-              Mostrar contraseña
-            </label>
+              <span 
+                className="toggle-password" 
+                onClick={() => setShowPassword(!showPassword)}
+                style={{ cursor: 'pointer' }}
+              >
+                {showPassword ? "Ocultar" : "Mostrar"}
+              </span>
+            </div>
             <button className="btn-submit" disabled={loading}>
               {loading ? "Cargando..." : (registrando ? "Regístrate" : "Inicia Sesión")}
             </button>

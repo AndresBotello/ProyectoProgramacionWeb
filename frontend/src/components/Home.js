@@ -36,6 +36,7 @@ const Home = () => {
   };
 
   const fetchCursos = async () => {
+    if (cursos.length > 0) return; // Evita recargas innecesarias si ya se tienen datos
     setIsLoading(true);
     try {
       const response = await fetch('http://localhost:3000/api/cursos/todos', {
@@ -87,7 +88,7 @@ const Home = () => {
           ) : cursos.length > 0 ? (
             <div className="cursos-list">
               {cursos.map(curso => (
-                <div className="curso-card" key={curso.id} onClick={() => navigate(`/cursos/${curso.id}`)}> {/* Redirigir al detalle del curso */}
+                <div className="curso-card" key={curso.id} onClick={() => navigate(`/cursos/${curso.id}`)}>
                   <h3>{curso.titulo}</h3>
                   <p>{curso.descripcion}</p>
                   <p>Precio: ${curso.precio}</p>

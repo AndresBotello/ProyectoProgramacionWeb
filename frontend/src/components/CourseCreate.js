@@ -7,15 +7,14 @@ const CourseCreate = () => {
     titulo: '',
     descripcion: '',
     contenido: '',
-    categoria_id: '', // Ahora lo dejamos vacío para que se elija dinámicamente
-    nivel_id: '', // Ahora lo dejamos vacío para que se elija dinámicamente
-    instructor_id: '', // Ahora lo dejamos vacío para que se elija dinámicamente
+    categoria_id: '', 
+    nivel_id: '', 
+    instructor_id: '', 
     precio: '',
     visible: true,
     idioma: 'ES'
   });
 
-  // Asegurar que los estados iniciales son arrays vacíos
   const [categorias, setCategorias] = useState([]);
   const [niveles, setNiveles] = useState([]);
   const [instructores, setInstructores] = useState([]);
@@ -24,30 +23,26 @@ const CourseCreate = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
-  // Cargar categorías, niveles e instructores al montar el componente
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Obtener categorías
         const categoriaRes = await fetch('http://localhost:3000/api/categoriasniveles/categorias', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const categoriaData = await categoriaRes.json();
-        setCategorias(categoriaData.data.data || []); // Asegura que siempre sea un array
+        setCategorias(categoriaData.data.data || []);
 
-        // Obtener niveles
         const nivelRes = await fetch('http://localhost:3000/api/categoriasniveles/niveles', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const nivelData = await nivelRes.json();
-        setNiveles(nivelData.data.data || []); // Asegura que siempre sea un array
+        setNiveles(nivelData.data.data || []);
 
-        // Obtener instructores
         const instructorRes = await fetch('http://localhost:3000/api/usuarios/instructores', {
           headers: { 'Authorization': `Bearer ${token}` }
         });
         const instructorData = await instructorRes.json();
-        setInstructores(instructorData.data.data || []); // Asegura que siempre sea un array
+        setInstructores(instructorData.data.data || []);
 
       } catch (error) {
         console.error('Error al cargar los datos:', error.message);
@@ -75,7 +70,6 @@ const CourseCreate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(curso.contenido);  // Verifica si el contenido se captura correctamente
     try {
       const response = await fetch('http://localhost:3000/api/cursos', {
         method: 'POST',
@@ -93,7 +87,6 @@ const CourseCreate = () => {
       const data = await response.json();
       const cursoId = data.data.cursoId;
 
-      // Crear las lecciones asociadas
       await Promise.all(
         lecciones.map(async (leccion) => {
           await fetch('http://localhost:3000/api/cursos/lecciones', {
@@ -107,7 +100,6 @@ const CourseCreate = () => {
         })
       );
 
-      // Redirigir al usuario al curso recién creado
       navigate(`/cursos/${cursoId}`);
     } catch (error) {
       console.error('Error al crear el curso:', error.message);
@@ -134,39 +126,27 @@ const CourseCreate = () => {
           <label>Categoría</label>
           <select name="categoria_id" value={curso.categoria_id} onChange={handleChange} required>
             <option value="">Seleccionar categoría</option>
-            {Array.isArray(categorias) && categorias.length > 0 ? (
-              categorias.map((categoria) => (
-                <option key={categoria.id} value={categoria.id}>{categoria.nombre}</option>
-              ))
-            ) : (
-              <option value="">Cargando categorías...</option>
-            )}
+            {categorias.map((categoria) => (
+              <option key={categoria.id} value={categoria.id}>{categoria.nombre}</option>
+            ))}
           </select>
         </div>
         <div>
           <label>Nivel</label>
           <select name="nivel_id" value={curso.nivel_id} onChange={handleChange} required>
             <option value="">Seleccionar nivel</option>
-            {Array.isArray(niveles) && niveles.length > 0 ? (
-              niveles.map((nivel) => (
-                <option key={nivel.id} value={nivel.id}>{nivel.nivel}</option>
-              ))
-            ) : (
-              <option value="">Cargando niveles...</option>
-            )}
+            {niveles.map((nivel) => (
+              <option key={nivel.id} value={nivel.id}>{nivel.nivel}</option>
+            ))}
           </select>
         </div>
         <div>
           <label>Instructor</label>
           <select name="instructor_id" value={curso.instructor_id} onChange={handleChange} required>
             <option value="">Seleccionar instructor</option>
-            {Array.isArray(instructores) && instructores.length > 0 ? (
-              instructores.map((instructor) => (
-                <option key={instructor.id} value={instructor.id}>{instructor.nombre}</option>
-              ))
-            ) : (
-              <option value="">Cargando instructores...</option>
-            )}
+            {instructores.map((instructor) => (
+              <option key={instructor.id} value={instructor.id}>{instructor.nombre}</option>
+            ))}
           </select>
         </div>
         <div>
@@ -176,7 +156,7 @@ const CourseCreate = () => {
 
         <h2>Lecciones</h2>
         {lecciones.map((leccion, index) => (
-          <div key={index}>
+          <div className="leccion-container" key={index}>
             <label>Título de la Lección</label>
             <input
               type="text"
@@ -202,7 +182,6 @@ const CourseCreate = () => {
           </div>
         ))}
         <button type="button" onClick={addLeccion}>Agregar otra lección</button>
-
         <button type="submit">Crear Curso</button>
       </form>
     </div>

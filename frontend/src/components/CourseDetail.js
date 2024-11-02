@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import '../CourseDetail.css'; 
+import '../CourseDetail.css';
 
 const CourseDetail = () => {
-  const { courseId } = useParams();  
+  const { courseId } = useParams();
   const [curso, setCurso] = useState(null);
   const [lecciones, setLecciones] = useState([]);
+  const [completedLessons, setCompletedLessons] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const token = localStorage.getItem('token');
@@ -25,8 +26,9 @@ const CourseDetail = () => {
         }
 
         const data = await response.json();
-        setCurso(data.data.curso);  
-        setLecciones(data.data.lecciones || []); 
+        setCurso(data.data.curso);
+        setLecciones(data.data.lecciones || []);
+        loadProgress(data.data.lecciones || []);
       } catch (error) {
         setError('Error al obtener el curso: ' + error.message);
       } finally {
@@ -37,22 +39,41 @@ const CourseDetail = () => {
     fetchCurso();
   }, [courseId, token]);
 
+  const loadProgress = (lecciones) => {
+    const savedProgress = JSON.parse(localStorage.getItem(`progress_${courseId}`)) || [];
+    const completed = lecciones.filter(leccion => savedProgress.includes(leccion.id)).map(leccion => leccion.id);
+    setCompletedLessons(completed);
+  };
+
+  const handleLessonClick = (lessonId) => {
+    if (!completedLessons.includes(lessonId)) {
+      const updatedCompleted = [...completedLessons, lessonId];
+      setCompletedLessons(updatedCompleted);
+      localStorage.setItem(`progress_${courseId}`, JSON.stringify(updatedCompleted));
+    }
+  };
+
+  const calculateProgress = () => {
+    if (lecciones.length === 0) return 0;
+    return (completedLessons.length / lecciones.length) * 100;
+  };
+
   return (
     <div className="course-detail-layout">
-      {/* Esquema del curso en la barra lateral izquierda */}
       <aside className="course-sidebar">
         <h2>Esquema del curso</h2>
         <input type="text" placeholder="Buscar esquema del curso" />
         <ul>
           {lecciones.map((leccion) => (
-            <li key={leccion.id}>
-              <a href={`#leccion-${leccion.id}`}>{leccion.titulo}</a>
+            <li key={leccion.id} className={completedLessons.includes(leccion.id) ? "completed" : ""}>
+              <a href={`#leccion-${leccion.id}`} onClick={() => handleLessonClick(leccion.id)}>
+                {leccion.titulo}
+              </a>
             </li>
           ))}
         </ul>
       </aside>
 
-      {/* Contenido principal del curso */}
       <main className="course-content">
         {isLoading ? (
           <p>Cargando curso...</p>
@@ -67,16 +88,24 @@ const CourseDetail = () => {
               <p><strong>Precio:</strong> ${curso.precio}</p>
             </div>
 
+            <section className="progress-section">
+              <h3>Progreso del curso</h3>
+              <div className="progress-bar">
+                <div className="progress" style={{ width: `${calculateProgress()}%` }}></div>
+              </div>
+              <p>{Math.round(calculateProgress())}% completado</p>
+            </section>
+
             <section className="course-lessons">
               <h2>Lecciones del Curso</h2>
               {lecciones.length > 0 ? (
                 <ul>
                   {lecciones.map((leccion) => (
-                    <li id={`leccion-${leccion.id}`} key={leccion.id}>
+                    <li id={`leccion-${leccion.id}`} key={leccion.id} className={completedLessons.includes(leccion.id) ? "lesson completed" : "lesson"}>
                       <h3>{leccion.titulo}</h3>
                       <p>{leccion.contenido || 'Sin descripción'}</p>
                       {leccion.video_url && (
-                        <p><strong>Video:</strong> <a href={leccion.video_url}>{leccion.video_url}</a></p>
+                        <p><strong>Video:</strong> <a href={leccion.video_url} target="_blank" rel="noopener noreferrer">Ver video</a></p>
                       )}
                     </li>
                   ))}

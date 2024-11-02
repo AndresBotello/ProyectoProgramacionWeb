@@ -1,111 +1,100 @@
-/* Estilos generales */
+/* General Styles */
 body {
   font-family: 'Open Sans', sans-serif;
-  background-color: #fbf9f8; /* Color de fondo del contenedor */
+  background-color: #fbf9f8;
 }
 
-/* Contenedor principal */
 .home-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   min-height: 100vh;
 }
 
-/* Encabezado */
+/* Header */
 .home-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #5a4860; /* Color de fondo del encabezado */
-  color: rgb(244, 241, 241);
-  padding: 20px; /* Espaciado dentro del encabezado */
+  background-color: #5a4860;
+  color: #f4f1f1;
+  padding: 20px;
 }
 
 .home-header h1 {
-  margin: 0;
   font-size: 2rem;
-  color: white; /* Color blanco para el título */
+  color: white;
 }
 
 .subtitle {
   font-size: 1rem;
-  color: #d2dae2; /* Color del subtítulo */
+  color: #d2dae2;
 }
 
-.header-right {
-  display: flex;
-  align-items: center;
-}
-
-.header-right .btn-logout {
-  background-color: rgb(220, 53, 69); /* Color de fondo del botón de cerrar sesión */
+.btn-logout {
+  background-color: #dc3545;
   border: none;
   padding: 10px 15px;
   color: white;
   border-radius: 5px;
   cursor: pointer;
-  margin-left: 20px; /* Espaciado entre el nombre y el botón */
 }
 
-.header-right .btn-logout:hover {
-  background-color: rgb(177, 38, 54); /* Color al pasar el mouse */
+.btn-logout:hover {
+  background-color: #b12636;
 }
 
-/* Botones principales */
+/* Main Buttons */
 .buttons-container {
   display: flex;
-  flex-wrap: wrap; /* Permite que los botones se envuelvan */
-  margin: 20px;
-  width: auto; /* Deja que ocupe el espacio necesario */
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 20px;
 }
 
-.buttons-container .btn {
-  background-color: #3d4852; /* Color base de los botones */
+.btn {
+  background-color: #3d4852;
   color: white;
   border: none;
   padding: 10px;
-  margin-right: 10px; /* Espaciado entre los botones */
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.buttons-container .btn:hover {
-  background-color: #0056b3; /* Color al pasar el mouse */
+.btn:hover {
+  background-color: #0056b3;
 }
 
-/* Sección de contenido */
+/* Content Section */
 .content-section {
   flex: 1;
   padding: 20px;
 }
 
 .cursos-list {
-  display: grid; /* Usar grid para un diseño uniforme */
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 3 tarjetas en una fila */
-  gap: 20px; /* Espaciado entre tarjetas */
-  padding: 20px; /* Espaciado interno */
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px;
 }
 
 .curso-card {
-  background: linear-gradient(135deg, #6a82fb 0%, #fc5c7d 100%); /* Fondo de las tarjetas */
-  border: none;
+  background: linear-gradient(135deg, #6a82fb 0%, #fc5c7d 100%);
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  color: white; /* Color del texto */
+  color: white;
   text-align: center;
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Animación al pasar el mouse */
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
 }
 
 .curso-card:hover {
-  transform: scale(1.03); /* Efecto de aumento al pasar el mouse */
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Sombra más fuerte al pasar el mouse */
+  transform: scale(1.05);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
 .progress-bar {
   height: 10px;
-  width: 100%;
   background-color: #ddd;
   border-radius: 5px;
   margin: 5px 0;
@@ -117,7 +106,7 @@ body {
   border-radius: 5px;
 }
 
-/* Media Queries para pantallas pequeñas */
+/* Responsive Design */
 @media (max-width: 768px) {
   .home-header {
     flex-direction: column;
@@ -125,11 +114,10 @@ body {
   }
 
   .buttons-container {
-    width: 100%;
-    justify-content: center; /* Centra los botones en pantallas pequeñas */
+    justify-content: center;
   }
 
-  .cursos-grid {
-    grid-template-columns: 1fr; /* Ajusta el diseño a una columna en pantallas pequeñas */
+  .cursos-list {
+    grid-template-columns: 1fr;
   }
 }
