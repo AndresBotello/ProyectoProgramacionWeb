@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import facebookIcon from '../assets/Facebook.png';
-import instagramIcon from '../assets/Instagram.png';
-import twitterIcon from '../assets/Twitter.png';
 import '../App.css';
 import imagen3 from '../assets/Imagen3.jpg'; 
 import imagen5 from '../assets/naturalezamuerta.jpg'; 
@@ -25,12 +22,14 @@ const Loguin = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [recoveryCode, setRecoveryCode] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null); 
   const navigate = useNavigate();
+
 
   const functAutenticacion = async (e) => {
     e.preventDefault();
@@ -57,19 +56,15 @@ const Loguin = ({ onLogin }) => {
       if (!response.ok) throw new Error(data.message || "Error en la autenticación");
 
       if (registrando) {
-        setSuccessMessage("Usuario registrado correctamente");
-        setTimeout(() => setRegistrando(false), 2000);
+        setSuccessMessage("Usuario registrado correctamente. Verifica tu correo.");
+        setIsVerifying(true);
       } else {
         localStorage.setItem('token', data.token);
         localStorage.setItem('nombre', data.nombre);
         localStorage.setItem('tipo_usuario_id', data.tipo_usuario_id);
         onLogin(data);
 
-        if (data.tipo_usuario_id === 2) {
-          navigate('/home');  
-        } else {
-          navigate('/user-access');  
-        }        
+        navigate(data.tipo_usuario_id === 2 ? '/home' : '/user-access');  
       }
     } catch (error) {
       setError(error.message || "Correo o contraseña incorrectos");
@@ -108,6 +103,24 @@ const Loguin = ({ onLogin }) => {
       setSuccessMessage("Contraseña restablecida con éxito. Inicia sesión con tu nueva contraseña.");
       setIsRecovering(false);
       setIsVerifying(false);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const handleVerifyEmail = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/usuarios/verify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ correo: email, codigo: verificationCode }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Error en la verificación de correo");
+
+      setSuccessMessage("Correo verificado exitosamente. Inicia sesión.");
+      setIsVerifying(false);
+      setRegistrando(false); 
     } catch (error) {
       setError(error.message);
     }
@@ -196,7 +209,24 @@ const Loguin = ({ onLogin }) => {
             </>
           )}
 
-          {isVerifying && (
+          {isVerifying && registrando && (
+            <>
+              <h2>Verificar Correo Electrónico</h2>
+              <input 
+                type="text" 
+                placeholder="Código de verificación" 
+                className="input-field" 
+                value={verificationCode} 
+                onChange={(e) => setVerificationCode(e.target.value)} 
+                required 
+              />
+              <button onClick={handleVerifyEmail} className="btn-submit">
+                Verificar Correo
+              </button>
+            </>
+          )}
+
+          {isVerifying && isRecovering && (
             <>
               <h2>Verificar Código y Restablecer Contraseña</h2>
               <input 
