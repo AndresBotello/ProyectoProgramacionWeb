@@ -3,6 +3,8 @@ const router = express.Router();
 const usuario = require('../Services/usuarios');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const sendVerificationEmail = require('../utils/email');
+
 
 const sendResponse = (res, status, message, data = null) => {
     res.status(status).json({ message, data });
@@ -96,5 +98,72 @@ router.delete('/:id', async (req, res) => {
         sendResponse(res, 500, 'Error en el servidor');
     }
 });
+
+//Ruta para verificar gmail
+router.post('/verify',  async (req, res) => {
+    const  { correo, codigo } = req.body;
+    try {
+        const user = await usuario.buscarUsuarioPorCorreo(correo);
+        if(!user || user.codigo_verificacion  !== codigo) {
+            return res.status(400).json({message: 'Código Incorrecto o Usuario no encontrado'});
+
+        }
+
+        await usuario.actualizarVerificado(correo);
+        res.json({message: 'Correo verificado con éxito'});
+        
+    } catch (error) {
+        console.error('Error al verificar Usuario: ', error);
+        res.status(500).json({message: 'Error en el servidor'});
+    }
+});
+
+
+
+router.post('/password-recovery', async (req, res) => {
+    const { correo  } = req.body;
+    try {
+        const user = await usuario.buscarUsuarioPorCorreo(correo);
+        if(!user) {
+            return res.status(404).json({message: 'Usuario no encontrado'});
+        }
+
+        const codigoRecuperacion = Math.floor(100000  + Math.random() * 900000).toString();
+        await  usuario.actualizarCodigoRecuperacion(correo, codigoRecuperacion);
+        await sendVerificationEmail(correo,  codigoRecuperacion);
+        res.json({message: 'Correo de recuperación enviado, revise su  correo electrónico'});
+
+    } catch (error) {
+        console.log('Error al enviar el correo de recuperacion', error);
+        res.status(500).json({message: 'Error en el servidor'});
+    }
+
+});
+
+
+router.post('/reset-password', async (req, res) => {
+    const { correo, codigo, nuevaContrasena } = req.body;
+
+    if (!nuevaContrasena) {
+        return res.status(400).json({ message: 'La nueva contraseña es requerida' });
+    }
+
+    try {
+        const user = await usuario.buscarUsuarioPorCorreo(correo);
+        if (!user || user.codigo_recuperacion !== codigo) {
+            return res.status(400).json({ message: 'Código Incorrecto o Usuario no encontrado' });
+        }
+
+        const hashpassword = await bcrypt.hash(nuevaContrasena, 10);
+        await usuario.cambiarContrasena(correo, hashpassword);
+        await usuario.actualizarCodigoRecuperacion(correo, null);
+        res.json({ message: 'Contraseña cambiada exitosamente' });
+
+    } catch (error) {
+        console.error('Error al cambiar la contraseña', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+});
+
 
 module.exports = router;

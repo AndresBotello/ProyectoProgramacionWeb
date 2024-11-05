@@ -3,6 +3,8 @@ const { emptyOrRows } = require('../helper');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const config = require('../config');
+const sendVerificationEmail = require('../utils/email');
+
 
 // Obtener todos los usuarios
 async function Todos() {
@@ -65,27 +67,39 @@ async function login(usuario) {
     }
 }
 
-// Registrar un nuevo usuario
 async function registrarUsuario(usuario) {
     const connection = await db.pool.getConnection();
     try {
         await connection.beginTransaction();
-        const hashpassword = await bcrypt.hash(usuario.contrasena, 10);
 
+        const hashpassword = await bcrypt.hash(usuario.contrasena, 10);
         const existingUser = await db.query('SELECT correo FROM usuarios WHERE correo = ?', [usuario.correo]);
         if (existingUser.length > 0) {
+            console.log("Correo ya registrado:", usuario.correo);
             return { error: 'El correo ya está en uso' };
         }
 
+        const codigoVerificacion = Math.floor(100000 + Math.random() * 900000).toString();
+        console.log("Código de verificación generado:", codigoVerificacion);
+
         const [result] = await connection.query(
-            `INSERT INTO usuarios (nombre, correo, contrasena, tipo_usuario_id, imagen_perfil) 
-            VALUES (?, ?, ?, ?, ?)`,
-            [usuario.nombre, usuario.correo, hashpassword, usuario.tipo_usuario_id, usuario.imagen_perfil]
+            `INSERT INTO usuarios (nombre, correo, contrasena, tipo_usuario_id, imagen_perfil, codigo_verificacion, verificado) 
+            VALUES (?, ?, ?, ?, ?, ?, false)`,
+            [usuario.nombre, usuario.correo, hashpassword, usuario.tipo_usuario_id, usuario.imagen_perfil, codigoVerificacion]
         );
+
         await connection.commit();
+        console.log("Transacción confirmada. Usuario registrado con ID:", result.insertId);
+
+        // Intentar enviar el correo de verificación
+        console.log("Intentando enviar correo de verificación a:", usuario.correo); // Depuración antes del envío
+        const mailResponse = await sendVerificationEmail(usuario.correo, codigoVerificacion);
+        console.log("Resultado del envío del correo:", mailResponse); // Depuración después del envío
+
         if (result.affectedRows) {
-            return { message: 'Usuario registrado exitosamente' };
+            return { message: 'Usuario registrado exitosamente. Revisa tu correo para verificar tu cuenta.' };
         } else {
+            console.error("Error: affectedRows no es válido:", result);
             return { error: 'Error al registrar el usuario' };
         }
     } catch (error) {
@@ -96,6 +110,9 @@ async function registrarUsuario(usuario) {
         connection.release();
     }
 }
+
+
+
 
 async function actualizarUsuario(id, usuario) {
     const connection = await db.pool.getConnection();
@@ -162,10 +179,22 @@ async function eliminarUsuario(id) {
     }
 }
 
-// Obtener un usuario por ID
+
 async function buscarUsuarioPorId(id) {
     const rows = await db.query('SELECT * FROM usuarios WHERE id = ?', [id]);
     return emptyOrRows(rows);
+}
+
+async function actualizarVerificado(correo) {
+    await db.query('UPDATE usuarios SET verificado = true, codigo_verificacion = NULL WHERE correo = ?',  [correo]);
+}
+
+async function actualizarCodigoRecuperacion(correo, codigoRecuperacion){
+    await db.query ('UPDATE usuarios SET codigo_recuperacion = ? WHERE correo = ?', [codigoRecuperacion, correo,]);
+}
+
+async function cambiarContrasena(correo, nuevaContrasena) {
+    await db.query ('UPDATE usuarios SET  contrasena = ? WHERE correo = ?', [nuevaContrasena, correo]);
 }
 
 module.exports = {
@@ -176,5 +205,8 @@ module.exports = {
     buscarUsuarioPorId,
     login,
     actualizarUsuario,
+    actualizarVerificado,
+    actualizarCodigoRecuperacion,
+    cambiarContrasena,
     eliminarUsuario
 };

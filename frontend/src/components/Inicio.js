@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/proyectolog.jpeg';
 import '../Inicio.css';
 import Footer from './Footer';
 
-// Componente para renderizar los cursos
-const CourseItem = ({ title, description }) => {
+const CourseItem = ({ title, description, onClick }) => {
   return (
-    <div className="course-item">
+    <div className="course-item" onClick={onClick}>
       <h3>{title}</h3>
       <p>{description}</p>
     </div>
@@ -19,6 +18,7 @@ const Inicio = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const token = localStorage.getItem('token');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCursos = async () => {
@@ -46,6 +46,15 @@ const Inicio = () => {
 
     fetchCursos();
   }, [token]);
+
+  // Maneja el acceso al curso
+  const handleCourseClick = (cursoId) => {
+    if (!token) {
+      navigate('/login');
+    } else {
+      navigate(`/cursos/${cursoId}`);
+    }
+  };
 
   return (
     <div className="app">
@@ -91,6 +100,7 @@ const Inicio = () => {
                     key={curso.id} 
                     title={curso.titulo} 
                     description={curso.descripcion} 
+                    onClick={() => handleCourseClick(curso.id)} // Al hacer clic, verifica la autenticación
                   />
                 ))
               ) : (
