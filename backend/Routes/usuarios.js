@@ -4,11 +4,60 @@ const usuario = require('../Services/usuarios');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const sendVerificationEmail = require('../utils/email');
+const cloudinary = require('../cloudinaryConfig');
+const  multer = require('multer');
+
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
 
 
 const sendResponse = (res, status, message, data = null) => {
     res.status(status).json({ message, data });
 };
+
+
+router.put('/perfil/:id', upload.single('imagen'), async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log('ID recibido:', id);
+        const { nombre, correo } = req.body;
+        let imagenPerfil = null;
+
+        // Subir la imagen a Cloudinary si se proporciona un archivo
+        if (req.file) {
+            try {
+                const result = await new Promise((resolve, reject) => {
+                    cloudinary.uploader.upload_stream({ resource_type: 'image' }, (error, result) => {
+                        if (error) {
+                            return reject(error);
+                        }
+                        resolve(result);
+                    }).end(req.file.buffer);
+                });
+                imagenPerfil = result.secure_url;
+            } catch (error) {
+                console.error('Error al subir la imagen a Cloudinary:', error);
+                return res.status(500).json({ message: 'Error al subir la imagen' });
+            }
+        }
+
+        const usuarioActualizado = { nombre, correo, imagen_perfil: imagenPerfil };
+
+        // Llamar a la función de actualización de perfil
+        const resultado = await usuario.actualizarPerfil(id, usuarioActualizado);
+        if (resultado.error) {
+            return res.status(400).json({ message: resultado.error });
+        }
+
+        res.status(200).json({ message: 'Perfil actualizado correctamente', data: resultado.data });
+    } catch (error) {
+        console.error('Error al actualizar el perfil:', error.message);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+});
+
+
 
 // Ruta para obtener todos los usuarios
 router.get('/todos', async (req, res) => {
@@ -58,9 +107,12 @@ router.post('/login', async function (req, res, next) {
         const resultado = await usuario.login(req.body);
         if (resultado.token) {
             return res.json({
+                id: resultado.id,
                 token: resultado.token,
                 nombre: resultado.nombre,
-                tipo_usuario_id: resultado.tipo_usuario_id
+                correo: resultado.correo,
+                tipo_usuario_id: resultado.tipo_usuario_id,
+                imagen_perfil: resultado.imagen_perfil
             });
         } else {
             res.status(401).json({ message: "Usuario o contraseña incorrectos" });

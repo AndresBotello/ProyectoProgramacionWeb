@@ -59,9 +59,12 @@ const Loguin = ({ onLogin }) => {
         setSuccessMessage("Usuario registrado correctamente. Verifica tu correo.");
         setIsVerifying(true);
       } else {
+        localStorage.setItem('id', data.id);
         localStorage.setItem('token', data.token);
         localStorage.setItem('nombre', data.nombre);
+        localStorage.setItem('correo', data.correo);
         localStorage.setItem('tipo_usuario_id', data.tipo_usuario_id);
+        localStorage.setItem('imagen_perfil', data.imagen_perfil);
         onLogin(data);
 
         navigate(data.tipo_usuario_id === 2 ? '/home' : '/user-access');  
@@ -257,9 +260,9 @@ const Loguin = ({ onLogin }) => {
 
         <div className="centered-container">
           <div className="info-box">
-            <InfoBox imageSrc={imagen3} description="Vista de montaje en lugar expositivo 2022" />
-            <InfoBox imageSrc={imagen5} description="Metaforización sobre la vida" />
-            <InfoBox imageSrc={imagen4} description="RELACIÓN VITAL Escultura" />
+            <InfoBox imageSrc={imagen3} description="VISTA DE MONTAJE EN LUGAR EXPOSITIVO 2022" />
+            <InfoBox imageSrc={imagen5} description="METAFORIZACION SOBRE LA VIDA" />
+            <InfoBox imageSrc={imagen4} description="RELACIÓN VITAL ESCULTURA" />
             <InfoBox imageSrc={imagen6} description="SUSURRO DEL DIOS CRONOS" />
           </div>
         </div>

@@ -57,9 +57,12 @@ async function login(usuario) {
         );
 
         return {
+            id: usuarioDb.id,
             token,
             nombre: usuarioDb.nombre,
-            tipo_usuario_id: usuarioDb.tipo_usuario_id
+            correo: usuarioDb.correo,
+            tipo_usuario_id: usuarioDb.tipo_usuario_id,
+            imagen_perfil: usuarioDb.imagen_perfil
         };
     } catch (error) {
         console.error('Error en el login', error.message);
@@ -181,8 +184,11 @@ async function eliminarUsuario(id) {
 
 
 async function buscarUsuarioPorId(id) {
-    const rows = await db.query('SELECT * FROM usuarios WHERE id = ?', [id]);
-    return emptyOrRows(rows);
+    const rows = await db.query('SELECT id, nombre, correo, imagen_perfil FROM usuarios WHERE id = ?', [id]);
+    if (rows.length === 0) {
+        return null;
+    }
+    return rows[0];
 }
 
 async function actualizarVerificado(correo) {
@@ -197,6 +203,66 @@ async function cambiarContrasena(correo, nuevaContrasena) {
     await db.query ('UPDATE usuarios SET  contrasena = ? WHERE correo = ?', [nuevaContrasena, correo]);
 }
 
+async function actualizarPerfil(id, usuario) {
+    const connection = await db.pool.getConnection();
+    try {
+        await connection.beginTransaction();
+
+        // Verifica si el usuario existe
+        const [existingUser] = await connection.query('SELECT * FROM usuarios WHERE id = ?', [id]);
+        if (existingUser.length === 0) {
+            return { error: 'Usuario no encontrado' };
+        }
+
+        // Actualiza los campos solo si son proporcionados
+        let updateFields = [];
+        let updateValues = [];
+
+        if (usuario.nombre) {
+            updateFields.push('nombre = ?');
+            updateValues.push(usuario.nombre);
+        }
+
+        if (usuario.correo) {
+            updateFields.push('correo = ?');
+            updateValues.push(usuario.correo);
+        }
+
+        if (usuario.imagen_perfil) {
+            updateFields.push('imagen_perfil = ?');
+            updateValues.push(usuario.imagen_perfil);
+        }
+
+        updateValues.push(id);
+
+        const query = `UPDATE usuarios SET ${updateFields.join(', ')} WHERE id = ?`;
+        const [result] = await connection.query(query, updateValues);
+        await connection.commit();
+
+        if (result.affectedRows === 0) {
+            return { error: 'No se pudo actualizar el perfil' };
+        }
+
+        // Retorna el usuario actualizado
+        const [updatedUser] = await connection.query('SELECT id, nombre, correo, imagen_perfil FROM usuarios WHERE id = ?', [id]);
+
+        return { 
+            message: 'Perfil actualizado correctamente',
+            data: updatedUser[0]
+        };
+
+    } catch (error) {
+        await connection.rollback();
+        console.error('Error al actualizar el perfil:', error);
+        return { error: 'Error en el servidor' };
+    } finally {
+        connection.release();
+    }
+}
+
+
+
+
 module.exports = {
     Todos,
     obtenerInstructores, 
@@ -208,5 +274,6 @@ module.exports = {
     actualizarVerificado,
     actualizarCodigoRecuperacion,
     cambiarContrasena,
+    actualizarPerfil,
     eliminarUsuario
 };

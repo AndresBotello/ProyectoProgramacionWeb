@@ -2,6 +2,7 @@
 body {
   font-family: 'Open Sans', sans-serif;
   background-color: #fbf9f8;
+  margin: 0; /* Eliminar el margen predeterminado del cuerpo */
 }
 
 .home-container {
@@ -18,6 +19,7 @@ body {
   background-color: #5a4860;
   color: #f4f1f1;
   padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil para el encabezado */
 }
 
 .home-header h1 {
@@ -37,10 +39,38 @@ body {
   color: white;
   border-radius: 5px;
   cursor: pointer;
+  transition: background-color 0.3s ease; /* Transición suave al pasar el mouse */
 }
 
 .btn-logout:hover {
   background-color: #b12636;
+}
+
+/* Edit Profile Buttons */
+.btn-editar-datos {
+  background: linear-gradient(135deg, #6478df 0%, #670b20 100%);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Transición suave */
+}
+
+.btn-guardar-cambios, 
+.btn-cancelar {
+  background: linear-gradient(135deg, #6478df 0%, #670b20 100%);
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Transición suave */
+}
+
+.btn-guardar-cambios:hover,
+.btn-cancelar:hover {
+  opacity: 0.8; /* Efecto de opacidad al pasar el mouse */
 }
 
 /* Main Buttons */
@@ -119,5 +149,24 @@ body {
 
   .cursos-list {
     grid-template-columns: 1fr;
+  }
+
+  .home-header h1 {
+    font-size: 1.8rem; /* Tamaño de fuente ajustado para pantallas pequeñas */
+  }
+}
+
+@media (max-width: 480px) {
+  .home-header h1 {
+    font-size: 1.5rem; /* Tamaño de fuente más pequeño */
+  }
+
+  .home-header .subtitle {
+    font-size: 0.9rem; /* Tamaño de fuente más pequeño */
+  }
+
+  .btn {
+    width: 100%; /* Botones ocupan todo el ancho en pantallas pequeñas */
+    padding: 15px; /* Más relleno para mejor clicabilidad */
   }
 }
