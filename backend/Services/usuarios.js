@@ -32,20 +32,21 @@ async function buscarUsuarioPorCorreo(correo) {
 // Iniciar sesión
 async function login(usuario) {
     try {
-        const isEmail = /\S+@\S+\.\S+/.test(usuario.correo);
-        const query = isEmail
-            ? `SELECT * FROM usuarios WHERE correo = ?`
-            : `SELECT * FROM usuarios WHERE nombre = ?`;
+        const query = /\S+@\S+\.\S+/.test(usuario.correo)
+            ? 'SELECT * FROM usuarios WHERE correo = ?'
+            : 'SELECT * FROM usuarios WHERE nombre = ?';
 
         const usuarioResultado = await db.query(query, [usuario.correo]);
-        if (!usuarioResultado || usuarioResultado.length === 0) {
-            return { message: "No se encontró el usuario" };
-        }
+        if (!usuarioResultado.length) return { message: "No se encontró el usuario" };
+
         const usuarioDb = usuarioResultado[0];
-        const esValido = await bcrypt.compare(usuario.contrasena, usuarioDb.contrasena);
-        if (!esValido) {
-            return { message: "Usuario o Contraseña Incorrecta" };
+        if (usuarioDb.verificado !== 1) {
+            return { message: "Por favor, verifica tu cuenta antes de iniciar sesión" };
         }
+
+        const esValido = await bcrypt.compare(usuario.contrasena, usuarioDb.contrasena);
+        if (!esValido) return { message: "Usuario o Contraseña Incorrecta" };
+
         const token = jwt.sign(
             {
                 id: usuarioDb.id,
@@ -53,7 +54,8 @@ async function login(usuario) {
                 correo: usuarioDb.correo,
                 tipo_usuario_id: usuarioDb.tipo_usuario_id
             },
-            config.secret_key
+            config.secret_key,
+            { expiresIn: '1h' } 
         );
 
         return {
@@ -74,8 +76,8 @@ async function registrarUsuario(usuario) {
     const connection = await db.pool.getConnection();
     try {
         await connection.beginTransaction();
-
         const hashpassword = await bcrypt.hash(usuario.contrasena, 10);
+
         const existingUser = await db.query('SELECT correo FROM usuarios WHERE correo = ?', [usuario.correo]);
         if (existingUser.length > 0) {
             console.log("Correo ya registrado:", usuario.correo);
@@ -92,28 +94,38 @@ async function registrarUsuario(usuario) {
         );
 
         await connection.commit();
-        console.log("Transacción confirmada. Usuario registrado con ID:", result.insertId);
+        console.log("Usuario registrado con ID:", result.insertId);
 
-        // Intentar enviar el correo de verificación
-        console.log("Intentando enviar correo de verificación a:", usuario.correo); // Depuración antes del envío
-        const mailResponse = await sendVerificationEmail(usuario.correo, codigoVerificacion);
-        console.log("Resultado del envío del correo:", mailResponse); // Depuración después del envío
-
-        if (result.affectedRows) {
-            return { message: 'Usuario registrado exitosamente. Revisa tu correo para verificar tu cuenta.' };
-        } else {
-            console.error("Error: affectedRows no es válido:", result);
-            return { error: 'Error al registrar el usuario' };
-        }
+        await sendVerificationEmail(usuario.correo, codigoVerificacion);
+        return { message: 'Usuario registrado exitosamente. Revisa tu correo para verificar tu cuenta.' };
     } catch (error) {
         await connection.rollback();
-        console.error('Error durante el registro del usuario:', error);
+        console.error('Error en el registro', error);
         return { error: 'Error en el servidor' };
     } finally {
         connection.release();
     }
 }
 
+// Verificación de cuenta
+async function verificarCodigo(correo, codigo) {
+    const connection = await db.pool.getConnection();
+    try {
+        const [result] = await connection.query(
+            'SELECT * FROM usuarios WHERE correo = ? AND codigo_verificacion = ?',
+            [correo, codigo]
+        );
+        if (!result.length) return { error: 'Código de verificación incorrecto' };
+
+        await connection.query('UPDATE usuarios SET verificado = true WHERE correo = ?', [correo]);
+        return { message: 'Cuenta verificada exitosamente' };
+    } catch (error) {
+        console.error('Error en verificación', error);
+        throw new Error('Error en el proceso de verificación');
+    } finally {
+        connection.release();
+    }
+}
 
 
 
@@ -262,7 +274,6 @@ async function actualizarPerfil(id, usuario) {
 
 
 
-
 module.exports = {
     Todos,
     obtenerInstructores, 
@@ -275,5 +286,6 @@ module.exports = {
     actualizarCodigoRecuperacion,
     cambiarContrasena,
     actualizarPerfil,
+    verificarCodigo,
     eliminarUsuario
 };

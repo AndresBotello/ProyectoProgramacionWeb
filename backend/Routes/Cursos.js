@@ -7,17 +7,18 @@ const sendResponse = (res, status, message, data = null) => {
     res.status(status).json({ message, data });
 };
 
-// Ruta para obtener todos los cursos
 router.get('/todos', async (req, res) => {
+    const { categoria, nivel } = req.query; 
+  
     try {
-        const resultados = await cursoService.obtenerTodosLosCursos();
-        if (resultados.error) {
-            return sendResponse(res, 403, resultados.error);
-        }
-        sendResponse(res, 200, 'Cursos obtenidos exitosamente', resultados);
+      const resultados = await cursoService.obtenerCursosFiltrados(categoria, nivel);
+      if (resultados.error) {
+        return res.status(403).json({ message: resultados.error });
+      }
+      res.status(200).json({ message: 'Cursos obtenidos exitosamente', data: resultados });
     } catch (error) {
-        console.error('Error mientras se obtenían los cursos', error.message);
-        sendResponse(res, 500, 'Error en el servidor');
+      console.error('Error mientras se obtenían los cursos', error.message);
+      res.status(500).json({ message: 'Error en el servidor' });
     }
 });
 
@@ -102,6 +103,53 @@ router.get('/instructores', async (req, res) => {
     } catch (error) {
         console.error('Error al obtener instructores:', error.message);
         sendResponse(res, 500, 'Error en el servidor');
+    }
+});
+
+
+// Ruta para inscribir a un usuario en un curso
+router.post('/inscripciones', async (req, res) => {
+    try {
+        const { usuario_id, curso_id } = req.body;
+
+        if (!usuario_id || !curso_id) {
+            return sendResponse(res, 400, 'Faltan parámetros');
+        }
+
+        const resultado = await cursoService.inscribirEstudiante(usuario_id, curso_id);
+
+        if (resultado.error) {
+            return sendResponse(res, 400, resultado.error);
+        }
+
+        sendResponse(res, 200, resultado.message);
+    } catch (error) {
+        console.error('Error al inscribir al usuario:', error.message);
+        sendResponse(res, 500, 'Error en el servidor');
+    }
+});
+
+
+
+router.get('/filtrado', async (req, res) => {
+    try {
+        const { categoria, nivel } = req.query;
+        console.log(`Filtrando cursos por categoria: ${categoria}, nivel: ${nivel}`);
+
+        if (!categoria || !nivel) {
+            return res.status(400).json({ message: 'Se requiere categoría y nivel para filtrar los cursos' });
+        }
+
+        const cursos = await cursoService.obtenerCursosFiltrados(categoria, nivel);
+        console.log("Cursos encontrados:", cursos);
+
+        if (!cursos || cursos.length === 0) {
+            return res.status(404).json({ message: 'No se encontró el curso' });
+        }
+
+        res.status(200).json({ message: 'Curso obtenido exitosamente', data: cursos });
+    } catch (error) {
+        res.status(500).json({ message: 'Error en el servidor' });
     }
 });
 

@@ -10,6 +10,9 @@ async function obtenerNiveles() {
     return { data: rows };  // Devolvemos los datos en un objeto con la clave "data"
 }
 
+
+
+
 module.exports = {
     obtenerCategorias,
     obtenerNiveles

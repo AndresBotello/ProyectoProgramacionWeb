@@ -46,7 +46,7 @@ footer {
 /* Sección del perfil con imagen y detalles */
 .profile-section {
   display: flex;
-  align-items:baseline;
+  align-items: baseline;
   margin-bottom: 40px;
   flex-wrap: wrap;
   justify-content: baseline; /* Alineamos la sección */
@@ -114,7 +114,6 @@ footer {
   height: 200px; /* Altura fija para uniformidad */
 }
 
-
 .cursos-list li:hover {
   transform: scale(1.03); 
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Sombra más fuerte al pasar el mouse */
@@ -141,6 +140,7 @@ footer {
   justify-content: space-between;
   align-items: center;
 }
+
 /* Estilo del formulario de edición de perfil */
 .edit-profile-form {
   background-color: #f9f9f9; 
@@ -206,6 +206,41 @@ footer {
 
 .edit-profile-form button[type="button"]:hover {
   background-color: #a83224; 
+}
+
+/* Estilo para el botón de Inscripción */
+.btn-inscribirse {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.btn-inscribirse:hover {
+  background-color: #45a049;
+}
+
+/* Estilos para los mensajes de éxito y error */
+.success-message {
+  color: green;
+  margin-top: 10px;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+}
+
+.search-bar {
+  width: 100%;
+  position: relative;
+  margin: 5px; /* Añade margen de 20px alrededor */
+  padding: 6px 6px; /* Espaciado interno de 10px arriba y abajo, 15px a los lados */
+  font-size: 36px; /* Tamaño de fuente un poco más grande */
+  border-radius: 5px; /* Bordes redondeados para un toque más suave */
+  box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
 }
 
 /* Media Queries para diferentes tamaños de pantalla */

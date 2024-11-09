@@ -6,6 +6,9 @@ import Footer from './Footer';
 const UserAccessForm = () => {
   const [cursos, setCursos] = useState([]);
   const [error, setError] = useState(null);
+  const [inscripcionExitoso, setInscripcionExitoso] = useState(null);
+  const [inscripcionError, setInscripcionError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState(''); 
   const [nombreUsuario, setNombreUsuario] = useState(localStorage.getItem('nombre') || 'Usuario');
   const [emailUsuario, setEmailUsuario] = useState(localStorage.getItem('correo') || 'Correo');
   const [imagenPerfil, setImagenPerfil] = useState(localStorage.getItem('imagen_perfil') || 'https://via.placeholder.com/150');
@@ -34,19 +37,18 @@ const UserAccessForm = () => {
   const handleSaveProfile = async (e) => {
     e.preventDefault();
     const userId = localStorage.getItem('id'); 
-    console.log('ID cargado desde localStorage:', userId); 
     if (!userId) {
       alert('No se ha encontrado el ID del usuario');
       return;
     }
-  
+
     const formData = new FormData();
     formData.append('nombre', newNombre);
     formData.append('correo', newCorreo);
     if (newImagen) {
       formData.append('imagen', newImagen);
     }
-  
+
     try {
       const response = await fetch(`http://localhost:3000/api/usuarios/perfil/${userId}`, {
         method: 'PUT',
@@ -56,11 +58,8 @@ const UserAccessForm = () => {
         body: formData
       });
       const data = await response.json();
-      console.log('Respuesta de la API:', data);
-  
       if (!response.ok) throw new Error(data.message);
-  
-     
+
       setNombreUsuario(newNombre);
       setEmailUsuario(newCorreo);
       
@@ -78,8 +77,6 @@ const UserAccessForm = () => {
       alert('Error al actualizar el perfil: ' + error.message);
     }
   };
-  
-  
 
   useEffect(() => {
     if (!token) {
@@ -114,15 +111,50 @@ const UserAccessForm = () => {
     const nombre = localStorage.getItem('nombre') || 'Usuario';
     const imagen = localStorage.getItem('imagen_perfil') || 'https://via.placeholder.com/150';
 
-    console.log('Correo cargado desde localStorage:', correo);
-    console.log('Nombre cargado desde localStorage:', nombre);
-
     setNombreUsuario(nombre);
     setEmailUsuario(correo);
     setImagenPerfil(imagen);
 
     fetchCursos();
   }, [navigate, token]);
+
+  const handleInscripcion = async (cursoId) => {
+    try {
+      const usuarioId = localStorage.getItem('id');
+      if (!usuarioId) {
+        alert('No se ha encontrado el ID del usuario');
+        return;
+      }
+
+      const inscripcionData = {
+        usuario_id: usuarioId,
+        curso_id: cursoId,
+      };
+
+      const response = await fetch('http://localhost:3000/api/cursos/inscripciones', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(inscripcionData),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Error al inscribirse en el curso');
+      }
+
+      setInscripcionExitoso('Inscripción exitosa en el curso');
+      setInscripcionError(null);
+      alert('Te has inscrito en el curso correctamente!');
+    } catch (error) {
+      setInscripcionError(error.message);
+      setInscripcionExitoso(null);
+      alert('Error al inscribirse en el curso: ' + error.message);
+      console.error('Error al intentar inscribirse:', error);
+    }
+  };
 
   return (
     <div className="user-profile-container">
@@ -141,7 +173,7 @@ const UserAccessForm = () => {
         </div>
         <div className="profile-info">
           <h2>{nombreUsuario}</h2>
-          <p>{emailUsuario}</p> {/* Mostrar el correo */}
+          <p>{emailUsuario}</p>
           <p>¡Sigue aprendiendo con tus cursos!</p>
           <button className="btn-edit-profile" onClick={handleEditProfile}>Editar Perfil</button>
         </div>
@@ -177,29 +209,40 @@ const UserAccessForm = () => {
           <button type="button" onClick={() => setIsEditing(false)}>Cancelar</button>
         </form>
       )}
+       
+      <h2>Filtrar cursos disponibles</h2>
+      <div className="search-bar">
+        <input
+          type="text"
+          placeholder="Buscar cursos..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
 
       <h2>Cursos Disponibles</h2>
-      {isLoading ? (
-        <p>Cargando cursos...</p>
-      ) : error ? (
-        <p>{error}</p>
-      ) : cursos.length > 0 ? (
-        <div className="cursos-list">
-          {cursos.map(curso => (
-            <div className="curso-card" key={curso.id} onClick={() => navigate(`/cursos/${curso.id}`)}>
-              <h3>{curso.titulo}</h3>
-              <p>{curso.descripcion}</p>
-              <p>Precio: ${curso.precio}</p>
-              <div className="progress-bar">
-                <div className="progress" style={{ width: `${curso.progreso}%` }}></div>
-              </div>
-              <p>{curso.progreso}% completado</p>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p>No hay cursos disponibles.</p>
-      )}
+        {isLoading ? (
+          <p>Cargando cursos...</p>
+        ) : error ? (
+          <p>{error}</p>
+        ) : cursos.length > 0 ? (
+          <div className="cursos-list">
+            {cursos
+              .filter(curso =>
+                curso.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                curso.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+              )
+              .map(curso => (
+                <div className="curso-card" key={curso.id} onClick={() => navigate(`/cursos/${curso.id}`)}>
+                  <h3>{curso.titulo}</h3>
+                  <p>{curso.descripcion}</p>
+                  <button onClick={() => handleInscripcion(curso.id)}>Inscribirse</button>
+                </div>
+              ))}
+          </div>
+        ) : (
+          <p>No hay cursos disponibles.</p>
+        )}
 
       <Footer />
     </div>

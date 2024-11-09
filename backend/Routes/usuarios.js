@@ -217,5 +217,21 @@ router.post('/reset-password', async (req, res) => {
     }
 });
 
+// Ruta para verificar el código de verificación
+router.post('/verificar', async (req, res, next) => {
+    try {
+        const { correo, codigo } = req.body;
+        const resultado = await verificarCodigo(correo, codigo);
+
+        if (resultado.error) {
+            return res.status(400).json(resultado);
+        }
+        res.json(resultado);
+    } catch (error) {
+        console.error('Error durante la verificación', error);
+        next(error);
+    }
+});
+
 
 module.exports = router;

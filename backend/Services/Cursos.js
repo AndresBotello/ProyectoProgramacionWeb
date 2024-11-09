@@ -142,8 +142,52 @@ async function crearLeccion(leccion) {
 
 async function obtenerInstructores() {
     const rows = await db.query('SELECT * FROM usuarios WHERE tipo_usuario_id = 3');
-    return { data: rows };  // Devolvemos los instructores en la clave "data"
+    return { data: rows }; 
 }
+
+async function verificarInscripcion(usuarioId, cursoId) {
+    const inscripcion = await db.query('SELECT * FROM inscripciones WHERE usuario_id = ? AND curso_id = ?', [usuarioId, cursoId]);
+    return inscripcion.length > 0; 
+}
+
+const inscribirEstudiante = async (usuarioId, cursoId) => {
+    try {
+        // Verificar si el curso existe y está disponible
+        const curso = await db.query('SELECT * FROM cursos WHERE id = ? AND visible = TRUE', [cursoId]);
+        if (curso.length === 0) {
+            throw new Error('Curso no disponible o inexistente');
+        }
+
+        // Verificar si el estudiante ya está inscrito
+        const inscripcionExistente = await db.query('SELECT * FROM inscripciones WHERE usuario_id = ? AND curso_id = ?', [usuarioId, cursoId]);
+        if (inscripcionExistente.length > 0) {
+            throw new Error('Ya estás inscrito en este curso');
+        }
+
+        // Insertar inscripción en la base de datos
+        const fechaInscripcion = new Date();
+        await db.query('INSERT INTO inscripciones (usuario_id, curso_id, fecha_inscripcion) VALUES (?, ?, ?)', [usuarioId, cursoId, fechaInscripcion]);
+
+        return { success: true, message: 'Inscripción exitosa' };
+    } catch (error) {
+        console.error('Error al inscribir al estudiante:', error.message);
+        return { error: error.message };
+    }
+};
+
+async function obtenerCursosFiltrados(categoria, nivel) {
+    try {
+        let query = "SELECT * FROM cursos WHERE 1=1";
+        if (categoria) query += ` AND categoria_id = ${categoria}`;
+        if (nivel) query += ` AND nivel_id = ${nivel}`;
+
+        const rows = await db.query(query);
+        return rows;
+    } catch (error) {
+        throw new Error('Error al obtener cursos filtrados');
+    }
+}
+
 
 module.exports = {
     crearLeccion,
@@ -151,6 +195,9 @@ module.exports = {
     obtenerCursoPorId,
     crearCurso,
     actualizarCurso,
+    inscribirEstudiante,
+    verificarInscripcion,
     obtenerInstructores,
+    obtenerCursosFiltrados,
     eliminarCurso
 };
