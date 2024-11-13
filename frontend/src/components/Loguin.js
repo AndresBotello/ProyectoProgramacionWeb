@@ -36,25 +36,57 @@ const Loguin = ({ onLogin }) => {
     setLoading(true);
     setError(null);
     setSuccessMessage(null);
+  
+    // Validaciones solo para el registro
+    if (registrando) {
+      if (!nombre || !email || !password) {
+        setError("Por favor, completa todos los campos.");
+        setLoading(false);
+        return;
+      }
+  
+      // Validar formato de correo electrónico
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailPattern.test(email)) {
+        setError("Por favor, ingresa un correo electrónico válido.");
+        setLoading(false);
+        return;
+      }
+      
 
+      if (password.length < 6) {
+        setError("La contraseña debe tener al menos 6 caracteres.");
+        setLoading(false);
+        return;
+      }
+      
+      // Validar si la contraseña cumple con los requisitos de fortaleza (mayúscula, número y carácter especial)
+      const strongPasswordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
+      if (!strongPasswordPattern.test(password)) {
+        setError("La contraseña debe contener al menos una letra mayúscula, un número y un carácter especial.");
+        setLoading(false);
+        return;
+      }
+    }
+  
     try {
-      const url = registrando 
-        ? 'http://localhost:3000/api/usuarios' 
+      const url = registrando
+        ? 'http://localhost:3000/api/usuarios'
         : 'http://localhost:3000/api/usuarios/login';
-
-      const bodyData = registrando 
+  
+      const bodyData = registrando
         ? { nombre, correo: email, contrasena: password, tipo_usuario_id: 1 }
         : { correo: email, contrasena: password };
-
+  
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bodyData),
       });
-
+  
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Error en la autenticación");
-
+  
       if (registrando) {
         setSuccessMessage("Usuario registrado correctamente. Verifica tu correo.");
         setIsVerifying(true);
@@ -66,7 +98,7 @@ const Loguin = ({ onLogin }) => {
         localStorage.setItem('tipo_usuario_id', data.tipo_usuario_id);
         localStorage.setItem('imagen_perfil', data.imagen_perfil);
         onLogin(data);
-
+  
         navigate(data.tipo_usuario_id === 2 ? '/home' : '/user-access');  
       }
     } catch (error) {
@@ -75,6 +107,7 @@ const Loguin = ({ onLogin }) => {
       setLoading(false);
     }
   };
+  
 
   const handlePasswordRecovery = async () => {
     try {

@@ -20,6 +20,22 @@ router.get('/niveles', async (req, res) => {
     }
 });
 
+// Ruta para insertar una nueva categoría
+router.post('/insertar-categorias', async (req, res) => {
+    const { nombre } = req.body; 
+
+    if (!nombre) {
+        return res.status(400).json({ message: 'El nombre de la categoría es requerido' });
+    }
+
+    try {
+        const nuevaCategoria = await insertarCategoria(nombre);
+        res.status(201).json({ message: 'Categoría creada exitosamente', data: nuevaCategoria });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al insertar la categoría', error: error.message });
+    }
+});
+
 
 
 

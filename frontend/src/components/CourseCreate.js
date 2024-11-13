@@ -7,18 +7,30 @@ const CourseCreate = () => {
     titulo: '',
     descripcion: '',
     contenido: '',
-    categoria_id: '', 
-    nivel_id: '', 
-    instructor_id: '', 
+    categoria_id: '',
+    nivel_id: '',
+    instructor_id: '',
     precio: '',
     visible: true,
     idioma: 'ES'
   });
 
   const [categorias, setCategorias] = useState([]);
+  /*const [nuevaCategoria, setNuevaCategoria] = useState('');*/
   const [niveles, setNiveles] = useState([]);
   const [instructores, setInstructores] = useState([]);
-  const [lecciones, setLecciones] = useState([{ titulo: '', contenido: '', video_url: '', orden: 1 }]);
+  const [lecciones, setLecciones] = useState([{ 
+    titulo: '', 
+    contenido: '', 
+    orden: 1,
+    imagen: null, // Changed to store File object
+    video: null,  // Changed to store File object
+    imagen_url: '',
+    video_url: ''
+  }]);
+
+  const [isUploading, setIsUploading] = useState(false);
+  const [mensajeExito, setMensajeExito] = useState('');
 
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
@@ -43,9 +55,8 @@ const CourseCreate = () => {
         });
         const instructorData = await instructorRes.json();
         setInstructores(instructorData.data.data || []);
-
       } catch (error) {
-        console.error('Error al cargar los datos:', error.message);
+        console.error('Error al cargar los datos:', error);
       }
     };
 
@@ -57,6 +68,7 @@ const CourseCreate = () => {
     setCurso({ ...curso, [name]: value });
   };
 
+
   const handleLeccionChange = (index, e) => {
     const { name, value } = e.target;
     const nuevasLecciones = [...lecciones];
@@ -64,14 +76,41 @@ const CourseCreate = () => {
     setLecciones(nuevasLecciones);
   };
 
+  const handleFileChange = (index, e, fileType) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const nuevasLecciones = [...lecciones];
+    nuevasLecciones[index][fileType] = file;
+    setLecciones(nuevasLecciones);
+  };
+
   const addLeccion = () => {
-    setLecciones([...lecciones, { titulo: '', contenido: '', video_url: '', orden: lecciones.length + 1 }]);
+    if (lecciones.length < 10) {
+      setLecciones([
+        ...lecciones,
+        {
+          titulo: '',
+          contenido: '',
+          orden: lecciones.length + 1,
+          imagen: null,
+          video: null,
+          imagen_url: '',
+          video_url: ''
+        }
+      ]);
+    } else {
+      alert('Solo puedes agregar hasta 10 lecciones');
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsUploading(true);
+
     try {
-      const response = await fetch('http://localhost:3000/api/cursos', {
+      // 1. Crear el curso primero
+      const cursoResponse = await fetch('http://localhost:3000/api/cursos', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,29 +119,51 @@ const CourseCreate = () => {
         body: JSON.stringify(curso)
       });
 
-      if (!response.ok) {
-        throw new Error('Error al crear el curso');
+      if (!cursoResponse.ok) throw new Error('Error al crear el curso');
+      
+      const cursoData = await cursoResponse.json();
+      const cursoId = cursoData.data.cursoId;
+
+      // 2. Crear cada lección con sus archivos
+      for (let i = 0; i < lecciones.length; i++) {
+        const leccion = lecciones[i];
+        const formData = new FormData();
+        
+        formData.append('titulo', leccion.titulo);
+        formData.append('contenido', leccion.contenido);
+        formData.append('curso_id', cursoId);
+        formData.append('orden', leccion.orden);
+
+        if (leccion.imagen) {
+          formData.append('imagen', leccion.imagen);
+        }
+        if (leccion.video) {
+          formData.append('video', leccion.video);
+        }
+
+        const leccionResponse = await fetch('http://localhost:3000/api/cursos/lecciones', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        if (!leccionResponse.ok) {
+          throw new Error(`Error al crear la lección ${i + 1}`);
+        }
       }
 
-      const data = await response.json();
-      const cursoId = data.data.cursoId;
+      setMensajeExito('Curso y lecciones creados correctamente');
+      setTimeout(() => {
+         
+      }, 2000);
 
-      await Promise.all(
-        lecciones.map(async (leccion) => {
-          await fetch('http://localhost:3000/api/cursos/lecciones', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ ...leccion, curso_id: cursoId })
-          });
-        })
-      );
-
-      navigate(`/cursos/${cursoId}`);
     } catch (error) {
-      console.error('Error al crear el curso:', error.message);
+      console.error('Error:', error);
+      setMensajeExito('Error al crear el curso y las lecciones');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -153,37 +214,80 @@ const CourseCreate = () => {
           <label>Precio</label>
           <input type="number" name="precio" value={curso.precio} onChange={handleChange} required />
         </div>
+        <div>
+          <label>Visible</label>
+          <input 
+            type="checkbox" 
+            name="visible" 
+            checked={curso.visible} 
+            onChange={(e) => setCurso({ ...curso, visible: e.target.checked })} 
+          />
+        </div>
+        <div>
+          <label>Idioma</label>
+          <select name="idioma" value={curso.idioma} onChange={handleChange}>
+            <option value="ES">Español</option>
+            <option value="EN">Inglés</option>
+          </select>
+        </div>
 
-        <h2>Lecciones</h2>
-        {lecciones.map((leccion, index) => (
-          <div className="leccion-container" key={index}>
-            <label>Título de la Lección</label>
-            <input
-              type="text"
-              name="titulo"
-              value={leccion.titulo}
-              onChange={(e) => handleLeccionChange(index, e)}
-              required
-            />
-            <label>Contenido de la Lección</label>
-            <textarea
-              name="contenido"
-              value={leccion.contenido}
-              onChange={(e) => handleLeccionChange(index, e)}
-              required
-            />
-            <label>URL del Video (opcional)</label>
-            <input
-              type="text"
-              name="video_url"
-              value={leccion.video_url}
-              onChange={(e) => handleLeccionChange(index, e)}
-            />
-          </div>
-        ))}
-        <button type="button" onClick={addLeccion}>Agregar otra lección</button>
-        <button type="submit">Crear Curso</button>
+        <div>
+          <h3>Lecciones</h3>
+          {lecciones.map((leccion, index) => (
+            <div key={index} className="leccion-container">
+              <h4>Lección {index + 1}</h4>
+              <div>
+                <label>Título</label>
+                <input 
+                  type="text" 
+                  name="titulo" 
+                  value={leccion.titulo} 
+                  onChange={(e) => handleLeccionChange(index, e)} 
+                  required 
+                />
+              </div>
+              <div>
+                <label>Contenido</label>
+                <textarea 
+                  name="contenido" 
+                  value={leccion.contenido} 
+                  onChange={(e) => handleLeccionChange(index, e)} 
+                  required 
+                />
+              </div>
+              <div>
+                <label>Video</label>
+                <input 
+                  type="file" 
+                  accept="video/*" 
+                  onChange={(e) => handleFileChange(index, e, 'video')} 
+                />
+              </div>
+              <div>
+                <label>Imagen</label>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={(e) => handleFileChange(index, e, 'imagen')} 
+                />
+              </div>
+            </div>
+          ))}
+          <button type="button" onClick={addLeccion}>Añadir Lección</button>
+        </div>
+
+        <div>
+          <button type="submit" disabled={isUploading}>
+            {isUploading ? 'Creando curso...' : 'Crear Curso'}
+          </button>
+        </div>
       </form>
+
+      {mensajeExito && (
+        <div className={mensajeExito.includes('Error') ? 'error-message' : 'success-message'}>
+          {mensajeExito}
+        </div>
+      )}
     </div>
   );
 };

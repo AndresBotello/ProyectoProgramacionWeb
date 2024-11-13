@@ -9,6 +9,8 @@ const UserAccessForm = () => {
   const [inscripcionExitoso, setInscripcionExitoso] = useState(null);
   const [inscripcionError, setInscripcionError] = useState(null);
   const [searchTerm, setSearchTerm] = useState(''); 
+  const [categorias, setCategorias] = useState([]);
+  const [niveles, setNiveles] = useState([]);
   const [nombreUsuario, setNombreUsuario] = useState(localStorage.getItem('nombre') || 'Usuario');
   const [emailUsuario, setEmailUsuario] = useState(localStorage.getItem('correo') || 'Correo');
   const [imagenPerfil, setImagenPerfil] = useState(localStorage.getItem('imagen_perfil') || 'https://via.placeholder.com/150');
@@ -107,6 +109,35 @@ const UserAccessForm = () => {
       }
     };
 
+    const fetchCategorias = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/categoriasniveles/categorias', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        setCategorias(data.data || []);
+      } catch (error) {
+        console.error('Error al obtener categorías:', error);
+      }
+    };
+  
+    const fetchNiveles = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/categoriasniveles/niveles', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const data = await response.json();
+        setNiveles(data.data || []);
+      } catch (error) {
+        console.error('Error al obtener niveles:', error);
+      }
+    };
+  
+
     const correo = localStorage.getItem('correo') || 'Correo';
     const nombre = localStorage.getItem('nombre') || 'Usuario';
     const imagen = localStorage.getItem('imagen_perfil') || 'https://via.placeholder.com/150';
@@ -116,6 +147,8 @@ const UserAccessForm = () => {
     setImagenPerfil(imagen);
 
     fetchCursos();
+    fetchCategorias();
+    fetchNiveles();
   }, [navigate, token]);
 
   const handleInscripcion = async (cursoId) => {
@@ -160,7 +193,8 @@ const UserAccessForm = () => {
     <div className="user-profile-container">
       <div className="profile-banner">
         <div className="header-left">
-          <h1>Bienvenido, {nombreUsuario}</h1>
+          <h1>Bienvenido a MaraLeSte</h1>
+          <p className="banner-subtitle">Tu plataforma de cursos de arte</p>
         </div>
         <div className="header-right">
           <button className="btn-logout" onClick={handleLogout}>Cerrar Sesión</button>
@@ -210,7 +244,7 @@ const UserAccessForm = () => {
         </form>
       )}
        
-      <h2>Filtrar cursos disponibles</h2>
+      <h2 className="filtro">Buscar cursos disponibles</h2>
       <div className="search-bar">
         <input
           type="text"
@@ -230,12 +264,17 @@ const UserAccessForm = () => {
             {cursos
               .filter(curso =>
                 curso.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                curso.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+                curso.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                curso.nivel.toLowerCase().includes(searchTerm.toLowerCase())||
+                curso.categoria.toLowerCase().includes(searchTerm.toLowerCase())
               )
               .map(curso => (
                 <div className="curso-card" key={curso.id} onClick={() => navigate(`/cursos/${curso.id}`)}>
                   <h3>{curso.titulo}</h3>
                   <p>{curso.descripcion}</p>
+                  <p>Categoría: {curso.categoria}</p>
+                  <p>Nivel: {curso.nivel}</p>
+                  <p>Precio: ${curso.precio}</p>
                   <button onClick={() => handleInscripcion(curso.id)}>Inscribirse</button>
                 </div>
               ))}

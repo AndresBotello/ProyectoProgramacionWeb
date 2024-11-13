@@ -104,20 +104,36 @@ const CourseDetail = () => {
                     <li id={`leccion-${leccion.id}`} key={leccion.id} className={completedLessons.includes(leccion.id) ? "lesson completed" : "lesson"}>
                       <h3>{leccion.titulo}</h3>
                       <p>{leccion.contenido || 'Sin descripción'}</p>
+
+                      {/* Mostrar video si existe */}
                       {leccion.video_url && (
-                        <p><strong>Video:</strong> <a href={leccion.video_url} target="_blank" rel="noopener noreferrer">Ver video</a></p>
+                        <div className="media-container">
+                          <video controls className="media-item">
+                            <source src={leccion.video_url} type="video/mp4" />
+                            Tu navegador no soporta el video.
+                          </video>
+                        </div>
                       )}
+                      
+                      {/* Mostrar imagen si existe y es una URL */}
+                      {leccion.imagen_url && (
+                        <div className="media-container">
+                          <img src={leccion.imagen_url} alt={leccion.titulo} className="media-item" />
+                        </div>
+                      )}
+
+                      <button onClick={() => handleLessonClick(leccion.id)}>
+                        {completedLessons.includes(leccion.id) ? 'Lección Completada' : 'Marcar como Completada'}
+                      </button>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p>No hay lecciones disponibles para este curso.</p>
+                <p>No hay lecciones disponibles.</p>
               )}
             </section>
           </>
-        ) : (
-          <p>No hay detalles del curso disponibles.</p>
-        )}
+        ) : null}
       </main>
     </div>
   );

@@ -18,12 +18,14 @@ const Home = () => {
   const tipoUsuario = localStorage.getItem('tipo_usuario_id');
 
   useEffect(() => {
+    // Verificar si el usuario tiene acceso como administrador
     if (tipoUsuario !== '2') {
       alert("Acceso denegado. Solo los administradores pueden acceder.");
       navigate('/login'); 
       return;
     }
 
+    // Si hay un token, cargamos los cursos
     if (token) {
       fetchCursos();
     } else {
@@ -33,17 +35,18 @@ const Home = () => {
   }, [navigate, token, tipoUsuario]);
 
   const handleLogout = () => {
+    // Limpiar el localStorage y cerrar sesión
     localStorage.removeItem('token');
     localStorage.removeItem('nombre');
     localStorage.removeItem('tipo_usuario_id');
-    localStorage.removeItem('imagen_perfil'); // Limpiar también la imagen de perfil
+    localStorage.removeItem('imagen_perfil');
     setNombreUsuario('Usuario');
     alert("Sesión cerrada exitosamente");
     navigate('/login'); 
   };
 
   const fetchCursos = async () => {
-    if (cursos.length > 0) return; // Evita recargas innecesarias si ya se tienen datos
+    if (cursos.length > 0) return; // Evitar múltiples solicitudes
     setIsLoading(true);
     try {
       const response = await fetch('http://localhost:3000/api/cursos/todos', {
@@ -55,7 +58,7 @@ const Home = () => {
       if (!response.ok) {
         throw new Error(data.message);
       }
-      setCursos(data.data); 
+      setCursos(data.data); // Guardar los cursos en el estado
     } catch (error) {
       console.error("Error al cargar cursos: ", error);
       if (error.message === "Unauthorized") {
@@ -114,25 +117,26 @@ const Home = () => {
   return (
     <div className="home-container">
       <header className="home-header">
-        <div className="header-left">
-          <h1>Bienvenido a MaraLeSte, {nombreUsuario}</h1> 
-          <p className="subtitle">Plataforma de cursos de artes plásticas y dibujo</p>
+        {/* Banner principal */}
+        <div className="banner">
+          <h1 className="banner-title">Bienvenido a MaraLeSte</h1>
+          <p className="banner-subtitle">Tu plataforma de cursos de arte</p>
         </div>
+
         <div className="header-right">
           <button className="btn-logout" onClick={handleLogout}>Cerrar Sesión</button>
         </div>
       </header>
-
+      
       <div className="main-content">
-        {/* Sección de edición de perfil */}
         <div className="profile-section">
           <div className="profile-picture">
             <img src={imagenPerfil} alt="Perfil de Usuario" />
           </div>
           <div className="profile-info">
             <h2>{nombreUsuario}</h2>
-            <p>{emailUsuario}</p> {/* Mostrar el correo */}
-            <button className = "btn-editar-datos" onClick={() => setIsEditing(true)}>Editar Datos</button>
+            <p>{emailUsuario}</p>
+            <button className="btn-editar-datos" onClick={() => setIsEditing(true)}>Editar Perfil</button>
           </div>
         </div>
 
@@ -156,11 +160,12 @@ const Home = () => {
               type="file" 
               onChange={handleImageChange} 
             />
-             <button className="btn-guardar-cambios" type="submit">Guardar Cambios</button>
-             <button className="btn-cancelar" type="button" onClick={() => setIsEditing(false)}>Cancelar</button>
+            <button className="btn-guardar-cambios" type="submit">Guardar Cambios</button>
+            <button className="btn-cancelar" type="button" onClick={() => setIsEditing(false)}>Cancelar</button>
           </form>
         )}
 
+        {/* Botones de navegación */}
         <aside className="buttons-container">
           <button className="btn btn-secondary" onClick={() => navigate('/crear-curso')}>Crear Cursos</button>
           <button className="btn btn-info" onClick={() => navigate('/lista-cursos')}>Lista de Cursos</button>
@@ -169,6 +174,7 @@ const Home = () => {
           <button className="btn btn-light" onClick={() => navigate('/contacto')}>Contactar</button>
         </aside>
 
+        {/* Sección de cursos */}
         <section className="content-section">
           <h2>Cursos Disponibles</h2>
           <p>Explora nuestros cursos y mejora tus habilidades artísticas.</p>
@@ -180,11 +186,9 @@ const Home = () => {
                 <div className="curso-card" key={curso.id} onClick={() => navigate(`/cursos/${curso.id}`)}>
                   <h3>{curso.titulo}</h3>
                   <p>{curso.descripcion}</p>
+                  <p>Categoria: {curso.categoria}</p>
+                  <p>Nivel: {curso.nivel}</p>
                   <p>Precio: ${curso.precio}</p>
-                  <div className="progress-bar">
-                    <div className="progress" style={{ width: `${curso.progreso}%` }}></div>
-                  </div>
-                  <p>{curso.progreso}% completado</p>
                 </div>
               ))}
             </div>

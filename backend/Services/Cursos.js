@@ -1,11 +1,19 @@
 const db = require('./db');
 const { emptyOrRows } = require('../helper');
+const cloudinary = require('../cloudinaryConfig');
 
-// Obtener todos los cursos
+
 async function obtenerTodosLosCursos() {
-    const rows = await db.query('SELECT * FROM cursos');
+    const query = `
+        SELECT cursos.*, categorias.nombre AS categoria, niveles.nivel AS nivel
+        FROM cursos
+        JOIN categorias ON cursos.categoria_id = categorias.id
+        JOIN niveles ON cursos.nivel_id = niveles.id
+    `;
+    const rows = await db.query(query);
     return emptyOrRows(rows);
 }
+
 
 // Obtener un curso por su ID junto con sus lecciones
 async function obtenerCursoPorId(id) {
@@ -111,28 +119,36 @@ async function actualizarCurso(id, curso) {
 }
 
 
-// Crear una nueva lección
 async function crearLeccion(leccion) {
     const connection = await db.pool.getConnection();
     try {
         await connection.beginTransaction();
 
+        // Insertar la lección en la base de datos con las URLs ya generadas
         const result = await connection.query(
-            `INSERT INTO lecciones (titulo, contenido, video_url, curso_id, orden) 
-             VALUES (?, ?, ?, ?, ?)`,
-            [leccion.titulo, leccion.contenido, leccion.video_url, leccion.curso_id, leccion.orden]
+            `INSERT INTO lecciones (titulo, contenido, curso_id, orden, video_url, imagen_url) 
+            VALUES (?, ?, ?, ?, ?, ?)`,
+            [
+                leccion.titulo,
+                leccion.contenido,
+                leccion.curso_id,
+                leccion.orden,
+                leccion.video_url,  // Usar directamente leccion.video_url
+                leccion.imagen_url,  // Usar directamente leccion.imagen_url
+            ]
         );
-
+        console.log('resultados de la inserción:', result);
         await connection.commit();
+
         if (result[0].affectedRows) {
             return { message: 'Lección creada exitosamente', leccionId: result[0].insertId };
         } else {
-            return { error: 'Error al crear la lección' };
+            throw new Error('Error al crear la lección');
         }
     } catch (error) {
         await connection.rollback();
         console.error('Error al crear la lección:', error);
-        return { error: 'Error en el servidor al crear la lección' };
+        throw new Error('Error en el servidor al crear la lección');
     } finally {
         connection.release();
     }

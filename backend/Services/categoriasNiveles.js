@@ -11,9 +11,21 @@ async function obtenerNiveles() {
 }
 
 
+async function insertarCategoria(nombre) {
+    return new Promise((resolve, reject) => {
+        const query = 'INSERT INTO categorias (nombre) VALUES (?)'; 
+        connection.query(query, [nombre], (error, results) => {
+            if (error) {
+                return reject(error); 
+            }
+            resolve({ id: results.insertId, nombre }); 
+        });
+    });
+}
 
 
 module.exports = {
     obtenerCategorias,
-    obtenerNiveles
+    obtenerNiveles,
+    insertarCategoria
 };
