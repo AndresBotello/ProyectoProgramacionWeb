@@ -14,6 +14,7 @@ import UserManagement from './components/UserManagement';
 import CourseCreate from './components/CourseCreate';
 import CourseList from './components/CourseList';
 import EditCourse from './components/EditCourse';
+import EvaluationCreate from './components/EvaluationCreate';
 
 
 function App() {
@@ -55,9 +56,9 @@ function App() {
           <Route path="/" element={<Inicio />} />
           <Route path="/home" element={<Home usuario={usuario} onLogout={handleLogout} />} />
           
-          <Route path="/servicios" element={
-            <ProtectedRoute usuario={usuario}>
-              <Servicios />
+          <Route path="/crear-evaluaciones" element={
+            <ProtectedRoute usuario={usuario} requiredRole="2">
+              <EvaluationCreate />
             </ProtectedRoute>
           } />
 

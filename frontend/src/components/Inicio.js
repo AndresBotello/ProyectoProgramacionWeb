@@ -100,7 +100,7 @@ const Inicio = () => {
                     key={curso.id} 
                     title={curso.titulo} 
                     description={curso.descripcion} 
-                    onClick={() => handleCourseClick(curso.id)} // Al hacer clic, verifica la autenticación
+                    onClick={handleCourseClick} // Al hacer clic, verifica la autenticación
                   />
                 ))
               ) : (
