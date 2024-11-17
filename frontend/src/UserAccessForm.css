@@ -1,15 +1,30 @@
-/* Estilo general para la página del perfil */
-body, html {
+/* Evitar desbordamiento horizontal */
+body {
+  overflow-x: hidden;
   margin: 0;
   padding: 0;
-  min-height: 100%;
-  font-family: 'Arial', sans-serif;
+  width: 100%;
+  height: 100%;
 }
 
+/* Asegurar que el box-sizing es border-box para todos los elementos */
+* {
+  box-sizing: border-box;
+}
+
+/* Asegurar que los elementos dentro del body no causen desbordamientos */
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+/* Contenedor principal del perfil */
 .user-profile-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  overflow-x: hidden; /* Evita el desbordamiento horizontal */
 }
 
 /* Contenido principal toma todo el espacio */
@@ -29,7 +44,7 @@ footer {
 
 /* Banner en la parte superior del perfil */
 .profile-banner {
-  background: linear-gradient(90deg, #47b3b3, #003366);
+  background: linear-gradient(90deg, #47b3b3, #62778d);
   color: white;
   padding: 20px;
   display: flex;
@@ -62,8 +77,6 @@ footer {
 .btn-logout:hover {
   background-color: #c0392b;
 }
-
-
 
 /* Sección del perfil con imagen y detalles */
 .profile-section {
@@ -114,7 +127,7 @@ footer {
   background-color: #2980b9;
 }
 
-
+/* Formulario de edición del perfil */
 .edit-profile-form {
   max-width: 500px;
   margin: 20px auto;
@@ -171,6 +184,7 @@ footer {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
   padding: 20px;
+  overflow-x: hidden; /* Evita desbordamiento horizontal */
 }
 
 .curso-card {
@@ -179,6 +193,7 @@ footer {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
+  max-width: 100%; /* Asegura que no se desborde */
 }
 
 .curso-card:hover {
@@ -234,7 +249,7 @@ footer {
   margin-top: 20px;
 }
 
-/* Responsive design */
+/* Diseño responsivo */
 @media (max-width: 768px) {
   .profile-section {
     flex-direction: column;
@@ -244,6 +259,7 @@ footer {
   .profile-picture img {
     margin-right: 0;
     margin-bottom: 20px;
+    max-width: 100%; /* Asegura que la imagen no se desborde */
   }
 
   .edit-profile-form {
@@ -256,6 +272,6 @@ footer {
   }
 
   .cursos-list {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* Muestra un solo curso por fila */
   }
 }

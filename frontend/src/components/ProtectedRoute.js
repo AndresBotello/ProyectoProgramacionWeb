@@ -5,8 +5,9 @@ const ProtectedRoute = ({ children, requiredRole }) => {
   const token = localStorage.getItem('token');
   const tipoUsuario = localStorage.getItem('tipo_usuario_id');
 
-  
-  if (!token || (requiredRole && tipoUsuario !== requiredRole)) {
+
+  const allowedRoles = requiredRole.split(',');
+  if (!token || !allowedRoles.includes(tipoUsuario)) {
     return <Navigate to="/login" replace />;
   }
 

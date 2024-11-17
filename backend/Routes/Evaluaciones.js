@@ -184,6 +184,82 @@ router.get('/evaluacion-curso/:curso_id', async (req, res) => {
 });
 
 
+// Ruta para que un usuario responda a una pregunta
+router.post('/respuesta-usuario', async (req, res) => {
+    const { usuario_id, evaluacion_id, pregunta_id, opcion_seleccionada, respuesta_texto, archivo_url, calificacion } = req.body;
+    
+    console.log('Datos recibidos para registrar respuesta:', { usuario_id, evaluacion_id, pregunta_id, opcion_seleccionada, respuesta_texto, archivo_url, calificacion });
+
+    if (!usuario_id || !evaluacion_id || !pregunta_id || (opcion_seleccionada === undefined && !respuesta_texto)) {
+        return res.status(400).json({ message: 'Faltan campos requeridos' });
+    }
+
+    try {
+        // Si la respuesta tiene opción seleccionada (respuestas de tipo opción)
+        if (opcion_seleccionada !== undefined) {
+            // Guardar la respuesta seleccionada
+            const nuevaRespuesta = await evaluacionService.crearRespuestaConOpcion({
+                usuario_id,
+                evaluacion_id,
+                pregunta_id,
+                opcion_seleccionada,
+                calificacion
+            });
+            console.log('Respuesta con opción seleccionada guardada:', nuevaRespuesta);
+            res.status(201).json({ message: 'Respuesta registrada exitosamente', data: nuevaRespuesta });
+
+        } else {
+            // Si es una respuesta abierta (texto o archivo)
+            const nuevaRespuestaAbierta = await evaluacionService.crearRespuestaAbierta({
+                usuario_id,
+                evaluacion_id,
+                pregunta_id,
+                respuesta_texto,
+                archivo_url,
+                calificacion
+            });
+            console.log('Respuesta abierta guardada:', nuevaRespuestaAbierta);
+            res.status(201).json({ message: 'Respuesta abierta registrada exitosamente', data: nuevaRespuestaAbierta });
+        }
+    } catch (error) {
+        console.error('Error al registrar la respuesta del usuario:', error.message);
+        res.status(500).json({ message: 'Error en el servidor', error: error.message });
+    }
+});
+
+
+router.get('/verificar-estado/:evaluacion_id', async (req, res) => {
+    const { evaluacion_id } = req.params;
+    const usuario_id = req.query.usuario_id;
+
+    if (!usuario_id || !evaluacion_id) {
+        return res.status(400).json({ 
+            message: 'Se requieren el ID del usuario y de la evaluación'
+        });
+    }
+
+    try {
+        const estadoEvaluacion = await evaluacionService.verificarEvaluacionPresentada(
+            usuario_id, 
+            evaluacion_id
+        );
+        
+        res.status(200).json({
+            message: 'Estado de evaluación verificado exitosamente',
+            data: {
+                evaluacionPresentada: estadoEvaluacion.evaluacionPresentada,
+                intentos: estadoEvaluacion.intentos
+            }
+        });
+    } catch (error) {
+        console.error('Error al verificar estado de la evaluación:', error);
+        res.status(500).json({ 
+            message: 'Error al verificar el estado de la evaluación',
+            error: error.message 
+        });
+    }
+});
+
 
 
 module.exports = router;

@@ -272,6 +272,53 @@ async function actualizarPerfil(id, usuario) {
     }
 }
 
+const obtenerPuntosPorInstructor = async (instructor_id) => {
+    const query = `
+        SELECT 
+            u.id AS usuario_id,
+            u.nombre AS usuario_nombre,
+            c.id AS curso_id,
+            c.titulo AS curso_titulo,
+            i.fecha_inscripcion,
+            COUNT(DISTINCT CASE WHEN o.es_correcta = 1 AND r.id IS NOT NULL THEN r.id END) AS puntos_obtenidos,
+            (
+                SELECT COUNT(*) 
+                FROM preguntas pr 
+                JOIN evaluaciones ev ON pr.evaluacion_id = ev.id 
+                WHERE ev.curso_id = c.id
+            ) AS total_preguntas
+        FROM usuarios u
+        JOIN inscripciones i ON u.id = i.usuario_id
+        JOIN cursos c ON c.id = i.curso_id
+        LEFT JOIN evaluaciones e ON e.curso_id = c.id
+        LEFT JOIN preguntas p ON p.evaluacion_id = e.id
+        LEFT JOIN respuestas_usuario r ON r.usuario_id = u.id AND r.pregunta_id = p.id
+        LEFT JOIN opciones o ON o.pregunta_id = p.id
+        WHERE u.tipo_usuario_id = 1 
+        AND c.instructor_id = ?
+        GROUP BY u.id, u.nombre, c.id, c.titulo, i.fecha_inscripcion
+        ORDER BY i.fecha_inscripcion DESC`;
+
+    try {
+        const rows = await db.query(query, [instructor_id]);
+        
+        const data = Array.isArray(rows) ? rows : [rows];
+        const processedData = data.map(row => ({
+            ...row,
+            porcentaje_completitud: row.total_preguntas > 0 
+                ? ((row.puntos_obtenidos / row.total_preguntas) * 100).toFixed(2) + '%'
+                : '0%'
+        }));
+
+        return {
+            message: "Puntos obtenidos correctamente.",
+            data: processedData
+        };
+    } catch (error) {
+        console.error('Error al obtener los puntos:', error.message, error.stack);
+        return { error: 'Error al obtener los puntos de los estudiantes.' };
+    }
+};
 
 
 module.exports = {
@@ -286,6 +333,7 @@ module.exports = {
     actualizarCodigoRecuperacion,
     cambiarContrasena,
     actualizarPerfil,
+    obtenerPuntosPorInstructor,
     verificarCodigo,
     eliminarUsuario
 };

@@ -209,6 +209,145 @@ async function obtenerEvaluacionDetallePorCurso(curso_id) {
 }
 
 
+// Función para crear respuesta con opción seleccionada
+async function crearRespuestaConOpcion({ usuario_id, evaluacion_id, pregunta_id, opcion_seleccionada, calificacion }) {
+    const query = `
+        INSERT INTO respuestas_usuario (usuario_id, evaluacion_id, pregunta_id, opcion_seleccionada, calificacion)
+        VALUES (?, ?, ?, ?, ?)
+    `;
+    const params = [usuario_id, evaluacion_id, pregunta_id, opcion_seleccionada, calificacion];
+    try {
+        // Ejecuta la consulta de inserción y obtén el resultado
+        const [result] = await db.query(query, params);
+        
+        // Verifica que la respuesta se haya creado correctamente
+        if (result.affectedRows > 0) {
+            return { success: true, message: 'Respuesta con opción seleccionada registrada exitosamente' };
+        } else {
+            throw new Error('No se pudo registrar la respuesta con opción seleccionada');
+        }
+    } catch (error) {
+        console.error('Error al crear respuesta con opción:', error.message);
+        return { error: error.message };
+    }
+}
+
+
+// Función para crear respuesta abierta
+async function crearRespuestaAbierta({ usuario_id, evaluacion_id, pregunta_id, respuesta_texto, archivo_url, calificacion }) {
+    const query = `
+        INSERT INTO respuestas_usuario (usuario_id, evaluacion_id, pregunta_id, respuesta_texto, archivo_url, calificacion)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `;
+    const params = [usuario_id, evaluacion_id, pregunta_id, respuesta_texto, archivo_url, calificacion];
+    try {
+        // Ejecuta la consulta de inserción y obtén el resultado
+        const [result] = await db.query(query, params);
+        
+        // Verifica que la respuesta se haya creado correctamente
+        if (result.affectedRows > 0) {
+            return { success: true, message: 'Respuesta abierta registrada exitosamente' };
+        } else {
+            throw new Error('No se pudo registrar la respuesta abierta');
+        }
+    } catch (error) {
+        console.error('Error al crear respuesta abierta:', error.message);
+        return { error: error.message };
+    }
+}
+
+
+async function obtenerRespuestasPorUsuario({ usuario_id, evaluacion_id }) {
+    const query = `
+      SELECT r.usuario_id, r.evaluacion_id, r.pregunta_id, r.opcion_seleccionada, r.respuesta_texto, r.archivo_url, r.calificacion
+      FROM respuestas_usuario r
+      WHERE r.usuario_id = ? AND r.evaluacion_id = ?
+    `;
+    const params = [usuario_id, evaluacion_id];
+  
+    try {
+      const [result] = await db.query(query, params);
+      return result.length > 0
+        ? { success: true, respuestas: result }
+        : { success: false, message: 'No se encontraron respuestas para este usuario en la evaluación proporcionada' };
+    } catch (error) {
+      console.error('Error al obtener las respuestas por usuario:', error.message);
+      return { error: error.message };
+    }
+}
+  
+  // Función para obtener el puntaje total de un usuario en una evaluación
+async function obtenerPuntajeTotal(usuario_id, evaluacion_id) {
+    const query = `
+      SELECT 
+        ru.usuario_id,
+        ru.evaluacion_id,
+        SUM(CASE WHEN o.es_correcta = TRUE THEN p.puntos ELSE 0 END) AS puntaje_total
+      FROM 
+        respuestas_usuario ru
+      JOIN 
+        preguntas p ON ru.pregunta_id = p.id
+      JOIN 
+        opciones o ON ru.opcion_seleccionada = o.id
+      WHERE 
+        ru.usuario_id = ? AND ru.evaluacion_id = ?
+      GROUP BY 
+        ru.usuario_id, ru.evaluacion_id
+    `;
+    const params = [usuario_id, evaluacion_id];
+    try {
+      const [result] = await db.query(query, params);
+      if (result.length > 0) {
+        return { success: true, puntaje: result[0].puntaje_total };
+      } else {
+        return { success: false, message: 'No se pudo obtener el puntaje de la evaluación o no se encontraron respuestas.' };
+      }
+    } catch (error) {
+      console.error('Error al obtener el puntaje:', error.message);
+      return { error: error.message };
+    }
+}
+
+
+async function verificarEvaluacionPresentada(usuario_id, evaluacion_id) {
+    const query = `
+        SELECT 
+            CASE 
+                WHEN COUNT(*) > 0 THEN 1
+                ELSE 0
+            END AS ya_presento,
+            COUNT(*) AS intentos
+        FROM respuestas_usuario
+        WHERE usuario_id = ? AND evaluacion_id = ?;
+    `;
+
+    try {
+        const [results] = await db.query(query, [usuario_id, evaluacion_id]);
+
+        // Verificar si los resultados son válidos
+        if (!results || results.length === 0) {
+            console.log("Resultados no encontrados o consulta vacía.");
+            return {
+                evaluacionPresentada: false,
+                intentos: 0
+            };
+        }
+
+        // Extraer los valores de los resultados
+        const yaPresento = results.ya_presento === 1;
+        const intentos = results.intentos;
+
+        return {
+            evaluacionPresentada: yaPresento,
+            intentos: intentos
+        };
+    } catch (error) {
+        console.error('Error al verificar evaluación presentada:', error);
+        throw new Error('Error al verificar el estado de la evaluación');
+    }
+}
+
+
 
 
 module.exports = {
@@ -223,5 +362,9 @@ module.exports = {
     crearRespuestaAbierta,
     obtenerTiposPreguntas,
     obtenerEvaluacionDetallePorCurso,
+    crearRespuestaConOpcion,
+    obtenerRespuestasPorUsuario,
+    obtenerPuntajeTotal,
+    verificarEvaluacionPresentada,
     obtenerRespuestasAbiertas
 };

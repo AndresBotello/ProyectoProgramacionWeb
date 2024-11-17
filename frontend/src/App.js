@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // Importa tus componentes
 import Loguin from './components/Loguin';
 import Home from './components/Home';
-import Servicios from './components/Servicios'; 
+import Instructor from './components/InstructorAcces';
 import Portafolio from './components/Portafolio';
 import CourseDetail from './components/CourseDetail'; 
 import Inicio from './components/Inicio'; 
@@ -15,6 +15,7 @@ import CourseCreate from './components/CourseCreate';
 import CourseList from './components/CourseList';
 import EditCourse from './components/EditCourse';
 import EvaluationCreate from './components/EvaluationCreate';
+import UsuariosListIns from './components/UsuariosListIns';
 
 
 function App() {
@@ -69,7 +70,7 @@ function App() {
           } />
 
           <Route path="/portafolio" element={
-            <ProtectedRoute usuario={usuario}>
+            <ProtectedRoute usuario={usuario} >
               <Portafolio />
             </ProtectedRoute>
           } />
@@ -81,25 +82,37 @@ function App() {
           } />
 
           <Route path="/lista-cursos" element={
-            <ProtectedRoute usuario={usuario} requiredRole="2">
+            <ProtectedRoute usuario={usuario} requiredRole="2,3">
               <CourseList />
             </ProtectedRoute>
           } />
 
+          <Route path="/instructor" element={
+            <ProtectedRoute usuario={usuario} requiredRole="3">
+              <Instructor />
+            </ProtectedRoute>
+          } />
+
           <Route path="/user-access" element={
-            <ProtectedRoute usuario={usuario}>
+            <ProtectedRoute usuario={usuario} requiredRole="1">
               <UserAccessForm />
             </ProtectedRoute>
           } />
 
           <Route path="/user-management" element={
-            <ProtectedRoute usuario={usuario} requiredRole="2">
+            <ProtectedRoute usuario={usuario} requiredRole="2,3">
               <UserManagement />
             </ProtectedRoute>
           } />
 
+          <Route path="/usuarios-listinst" element={
+            <ProtectedRoute usuario={usuario} requiredRole="3">
+              <UsuariosListIns />
+            </ProtectedRoute>
+          } />
+
           <Route path="/cursos/:courseId" element={
-            <ProtectedRoute usuario={usuario}>
+            <ProtectedRoute usuario={usuario} requiredRole="1,2">
               <CourseDetail />
             </ProtectedRoute>
           } />

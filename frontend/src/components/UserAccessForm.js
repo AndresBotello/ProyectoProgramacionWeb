@@ -20,6 +20,7 @@ const UserAccessForm = () => {
   const [newCorreo, setNewCorreo] = useState(emailUsuario);
   const [newImagen, setNewImagen] = useState(null);
   const token = localStorage.getItem('token');
+  const usuarioId = localStorage.getItem('id');
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -94,6 +95,12 @@ const UserAccessForm = () => {
             'Authorization': `Bearer ${token}`
           }
         });
+
+        const usuarioId = localStorage.getItem('id');
+        if (!usuarioId) {
+          alert('No se ha encontrado el ID del usuario');
+          return;
+        }
 
         if (!response.ok) {
           throw new Error('Error al obtener los cursos');
@@ -254,35 +261,46 @@ const UserAccessForm = () => {
         />
       </div>
 
-      <h2>Cursos Disponibles</h2>
-        {isLoading ? (
-          <p>Cargando cursos...</p>
-        ) : error ? (
-          <p>{error}</p>
-        ) : cursos.length > 0 ? (
-          <div className="cursos-list">
-            {cursos
-              .filter(curso =>
-                curso.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                curso.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                curso.nivel.toLowerCase().includes(searchTerm.toLowerCase())||
-                curso.categoria.toLowerCase().includes(searchTerm.toLowerCase())
-              )
-              .map(curso => (
-                <div className="curso-card" key={curso.id} onClick={() => navigate(`/cursos/${curso.id}`)}>
-                  <h3>{curso.titulo}</h3>
-                  <p>{curso.descripcion}</p>
-                  <p>Categoría: {curso.categoria}</p>
-                  <p>Nivel: {curso.nivel}</p>
-                  <p>Precio: ${curso.precio}</p>
-                  <button onClick={() => handleInscripcion(curso.id)}>Inscribirse</button>
-                </div>
-              ))}
-          </div>
-        ) : (
-          <p>No hay cursos disponibles.</p>
-        )}
-
+                <h2>Cursos Disponibles</h2>
+          {isLoading ? (
+            <p>Cargando cursos...</p>
+          ) : error ? (
+            <p>{error}</p>
+          ) : cursos.length > 0 ? (
+            <div className="cursos-list">
+              {cursos
+                .filter(curso =>
+                  curso.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  curso.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  curso.nivel.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                  curso.categoria.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map(curso => {
+                  const usuarioId = localStorage.getItem('id'); // Recupera userId
+                  return (
+                    <div 
+                      className="curso-card" 
+                      key={curso.id} 
+                      onClick={() => navigate(`/cursos/${curso.id}`, { state: { usuarioId } })}
+                    >
+                      <h3>{curso.titulo}</h3>
+                      <p>{curso.descripcion}</p>
+                      <p>Categoría: {curso.categoria}</p>
+                      <p>Nivel: {curso.nivel}</p>
+                      <p>Precio: ${curso.precio}</p>
+                      <button onClick={(e) => {
+                        e.stopPropagation(); // Evita que el evento se propague al `onClick` del contenedor.
+                        handleInscripcion(curso.id);
+                      }}>
+                        Inscribirse
+                      </button>
+                    </div>
+                  );
+                })}
+            </div>
+          ) : (
+            <p>No hay cursos disponibles.</p>
+          )}
       <Footer />
     </div>
   );

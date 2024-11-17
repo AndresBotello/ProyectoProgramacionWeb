@@ -99,7 +99,7 @@ const Loguin = ({ onLogin }) => {
         localStorage.setItem('imagen_perfil', data.imagen_perfil);
         onLogin(data);
   
-        navigate(data.tipo_usuario_id === 2 ? '/home' : '/user-access');  
+        navigate(data.tipo_usuario_id === 2 ? '/home' : (data.tipo_usuario_id === 3 ? '/instructor' : '/user-access'));
       }
     } catch (error) {
       setError(error.message || "Correo o contraseña incorrectos");

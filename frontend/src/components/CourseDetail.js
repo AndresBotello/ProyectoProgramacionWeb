@@ -13,7 +13,52 @@ const CourseDetail = () => {
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [evaluationSubmitted, setEvaluationSubmitted] = useState(false);
   const [score, setScore] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [evaluationError, setEvaluationError] = useState(null);
+  const [evaluacionDisponible, setEvaluacionDisponible] = useState(true);
   const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    const savedEvaluationStatus = localStorage.getItem(`evaluation_submitted_${courseId}`);
+    const savedScore = localStorage.getItem(`evaluation_score_${courseId}`);
+    
+    if (savedEvaluationStatus === 'true' && savedScore) {
+      setEvaluationSubmitted(true);
+      setScore(JSON.parse(savedScore));
+    }
+  }, [courseId]);
+
+  const verificarEstadoEvaluacion = async (evaluacionId) => {
+    try {
+      const usuario_id = localStorage.getItem('id');
+      const response = await fetch(
+        `http://localhost:3000/api/evaluaciones/verificar-estado/${evaluacionId}?usuario_id=${usuario_id}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      
+      if (!response.ok) {
+        throw new Error('Error al verificar el estado de la evaluación');
+      }
+      
+      const data = await response.json();
+      
+      if (data.data.evaluacionPresentada) {
+        setEvaluationSubmitted(true);
+        setEvaluacionDisponible(false);
+        const savedScore = localStorage.getItem(`evaluation_score_${courseId}`);
+        if (savedScore) {
+          setScore(JSON.parse(savedScore));
+        }
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      setEvaluationError('Error al verificar el estado de la evaluación');
+    }
+  };
 
   const loadProgress = (lecciones) => {
     const savedProgress = JSON.parse(localStorage.getItem(`progress_${courseId}`)) || [];
@@ -36,7 +81,13 @@ const CourseDetail = () => {
     return (completedLessons.length / lecciones.length) * 100;
   };
 
+  const isFullyCompleted = () => {
+    return calculateProgress() === 100;
+  };
+
   const handleAnswerSelection = (preguntaId, opcionId) => {
+    if (evaluationSubmitted) return;
+    
     setSelectedAnswers((prev) => ({
       ...prev,
       [preguntaId]: opcionId,
@@ -63,10 +114,74 @@ const CourseDetail = () => {
     };
   };
 
-  const handleSubmitEvaluation = () => {
-    const result = calculateScore();
-    setScore(result);
-    setEvaluationSubmitted(true);
+  const validateAnswers = () => {
+    return evaluacion.preguntas.every(pregunta => selectedAnswers[pregunta.id] !== undefined);
+  };
+
+  const handleSubmitEvaluation = async () => {
+    if (evaluationSubmitted) {
+      setEvaluationError('Esta evaluación ya ha sido enviada y no puede modificarse.');
+      return;
+    }
+
+    if (!validateAnswers()) {
+      setEvaluationError('Por favor responde todas las preguntas antes de enviar.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setEvaluationError(null);
+
+    try {
+      const usuario_id = localStorage.getItem('id');
+      if (!usuario_id) {
+        setEvaluationError('No se pudo obtener el ID del usuario. Asegúrate de haber iniciado sesión.');
+        return;
+      }
+
+      const result = calculateScore();
+      
+      localStorage.setItem(`evaluation_submitted_${courseId}`, 'true');
+      localStorage.setItem(`evaluation_score_${courseId}`, JSON.stringify(result));
+      
+      setScore(result);
+      setEvaluationSubmitted(true);
+      setEvaluacionDisponible(false);
+
+      const submissionPromises = evaluacion.preguntas.map(async (pregunta) => {
+        const selectedOptionId = selectedAnswers[pregunta.id];
+        const correctOption = pregunta.opciones.find(opcion => opcion.es_correcta);
+        const calificacion = selectedOptionId === correctOption?.id ? 1 : 0;
+
+        const response = await fetch('http://localhost:3000/api/evaluaciones/respuesta-usuario', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            usuario_id,
+            evaluacion_id: evaluacion.id,
+            pregunta_id: pregunta.id,
+            opcion_seleccionada: selectedOptionId,
+            calificacion
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Error al enviar la respuesta');
+        }
+
+        return response.json();
+      });
+
+      await Promise.all(submissionPromises);
+    } catch (error) {
+      setEvaluationError('Error al enviar la evaluación. Por favor intente nuevamente.');
+      console.error('Error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const organizarEvaluacion = (data) => {
@@ -126,23 +241,26 @@ const CourseDetail = () => {
     const fetchEvaluacion = async () => {
       try {
         const response = await fetch(`http://localhost:3000/api/evaluaciones/evaluacion-curso/${courseId}`, {
-          headers: { 'Authorization': `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
         });
-        
+    
+        if (!response.ok) throw new Error('Error al obtener la evaluación');
+    
         const data = await response.json();
-
-        if (!response.ok) {
-          setEvaluacion(null); // No hay evaluación disponible
-        } else if (data.data && Array.isArray(data.data) && data.data.length > 0) {
+    
+        if (data.data && Array.isArray(data.data) && data.data.length > 0) {
           const evaluacionOrganizada = organizarEvaluacion(data.data);
           setEvaluacion(evaluacionOrganizada || null);
+    
+          if (evaluacionOrganizada) {
+            await verificarEstadoEvaluacion(evaluacionOrganizada.id);
+          }
         }
       } catch (error) {
-        console.error('Error al obtener la evaluación:', error);
         setError('Error al obtener la evaluación: ' + error.message);
       }
     };
-
+    
     fetchCurso();
     fetchEvaluacion();
   }, [courseId, token]);
@@ -223,32 +341,58 @@ const CourseDetail = () => {
             {evaluacion && (
               <section className="course-evaluation">
                 <h2>Evaluación del Curso</h2>
-                {evaluationSubmitted ? (
-                  <div>
-                    <h3>Resultado:</h3>
-                    <p>
-                      Puntaje: {score?.score}% ({score?.correctAnswers} de {score?.totalQuestions} correctas)
+                {!isFullyCompleted() ? (
+                  <div className="evaluation-locked">
+                    <p className="evaluation-notice">
+                      Para acceder a la evaluación, debes completar el 100% del curso.
+                      Progreso actual: {Math.round(calculateProgress())}%
+                    </p>
+                  </div>
+                ) : !evaluacionDisponible ? (
+                  <div className="evaluation-results">
+                    <h3>Evaluación ya presentada</h3>
+                    {score && (
+                      <p>
+                        Puntaje obtenido: {score.score.toFixed(1)}%
+                        ({score.correctAnswers} de {score.totalQuestions} correctas)
+                      </p>
+                    )}
+                    <p className="evaluation-notice">
+                      Esta evaluación ya ha sido completada y no puede presentarse nuevamente.
                     </p>
                   </div>
                 ) : (
-                  <div>
+                  <div className="evaluation-form">
                     {evaluacion.preguntas.map((pregunta) => (
-                      <div key={pregunta.id}>
+                      <div key={pregunta.id} className="question-container">
                         <h4>{pregunta.texto}</h4>
-                        {pregunta.opciones.map((opcion) => (
-                          <label key={opcion.id}>
-                            <input
-                              type="radio"
-                              name={`pregunta-${pregunta.id}`}
-                              value={opcion.id}
-                              onChange={() => handleAnswerSelection(pregunta.id, opcion.id)}
-                            />
-                            {opcion.texto}
-                          </label>
-                        ))}
+                        <div className="options-container">
+                          {pregunta.opciones.map((opcion) => (
+                            <label key={opcion.id} className="option-label">
+                              <input
+                                type="radio"
+                                name={`pregunta-${pregunta.id}`}
+                                value={opcion.id}
+                                onChange={() => handleAnswerSelection(pregunta.id, opcion.id)}
+                                checked={selectedAnswers[pregunta.id] === opcion.id}
+                                disabled={isSubmitting || evaluationSubmitted}
+                              />
+                              <span className="option-text">{opcion.texto}</span>
+                            </label>
+                          ))}
+                        </div>
                       </div>
                     ))}
-                    <button onClick={handleSubmitEvaluation}>Enviar evaluación</button>
+                    {evaluationError && <p className="error-message">{evaluationError}</p>}
+                    <div className="evaluation-controls">
+                      <button
+                        onClick={handleSubmitEvaluation}
+                        disabled={isSubmitting || !validateAnswers() || evaluationSubmitted}
+                        className="submit-button"
+                      >
+                        {isSubmitting ? 'Enviando...' : 'Enviar evaluación'}
+                      </button>
+                    </div>
                   </div>
                 )}
               </section>

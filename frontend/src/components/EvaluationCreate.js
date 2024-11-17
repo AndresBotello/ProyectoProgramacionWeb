@@ -65,6 +65,11 @@ const EvaluationCreate = () => {
     const { name, value } = e.target;
     const nuevasPreguntas = [...preguntas];
     nuevasPreguntas[index][name] = value;
+
+    if (name === "tipo" && value === "Opción múltiple") {
+      nuevasPreguntas[index].opciones = ['', ''];
+    }
+    
     setPreguntas(nuevasPreguntas);
   };
 

@@ -234,4 +234,30 @@ router.post('/verificar', async (req, res, next) => {
 });
 
 
+
+router.get('/puntos/:instructor_id', async (req, res) => {
+    const { instructor_id } = req.params;
+
+    if (!instructor_id) {
+        return sendResponse(res, 400, 'El ID del instructor es obligatorio.');
+    }
+
+    try {
+        const resultados = await usuario.obtenerPuntosPorInstructor(instructor_id);
+
+        if (resultados.error) {
+            return sendResponse(res, 404, resultados.error);
+        }
+
+        
+        return sendResponse(res, 200, 'Puntos obtenidos correctamente.', resultados);
+    } catch (error) {
+        console.error('Error al procesar la solicitud:', error.message);
+        return sendResponse(res, 500, 'Ocurrió un error interno al obtener los puntos.');
+    }
+});
+
+
+
+
 module.exports = router;
