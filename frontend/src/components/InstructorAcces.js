@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../InstructorAccess.css';
 import Footer from './Footer';
+import Mensajeria from './Mensajeria'; // Importa el componente Mensajeria
 
 const InstructorAccess = () => {
   const [nombreUsuario, setNombreUsuario] = useState(localStorage.getItem('nombre') || 'Usuario');
@@ -11,6 +12,7 @@ const InstructorAccess = () => {
   const [newNombre, setNewNombre] = useState(nombreUsuario);
   const [newCorreo, setNewCorreo] = useState(emailUsuario);
   const [newImagen, setNewImagen] = useState(null);
+  const [mostrarMensajeria, setMostrarMensajeria] = useState(false);  // Estado para controlar la visibilidad de la mensajería
   const token = localStorage.getItem('token');
   const usuarioId = localStorage.getItem('id');
   const navigate = useNavigate();
@@ -79,7 +81,6 @@ const InstructorAccess = () => {
       return;
     }
 
-
     const correo = localStorage.getItem('correo') || 'Correo';
     const nombre = localStorage.getItem('nombre') || 'Usuario';
     const imagen = localStorage.getItem('imagen_perfil') || 'https://via.placeholder.com/150';
@@ -88,10 +89,7 @@ const InstructorAccess = () => {
     setEmailUsuario(correo);
     setImagenPerfil(imagen);
 
-
   }, [navigate, token]);
-
-  
 
   return (
     <div className="user-profile-container">
@@ -114,6 +112,7 @@ const InstructorAccess = () => {
           <p>{emailUsuario}</p>
           <p>¡Sigue aprendiendo con tus cursos!</p>
           <button className="btn-edit-profile" onClick={handleEditProfile}>Editar Perfil</button>
+          <button className="btn-mensajeria" onClick={() => setMostrarMensajeria(!mostrarMensajeria)}>Ir a Mensajería</button>
         </div>
       </div>
 
@@ -148,13 +147,17 @@ const InstructorAccess = () => {
         </form>
       )}
 
-        <aside className="buttons-container">
-          <button className="btn btn-info" onClick={() => navigate('/lista-cursos')}>Lista de Cursos</button>
-          <button className="btn btn-warning" onClick={() => navigate('/usuarios-listinst')}>Lista de Usuarios</button>
-          <button className="btn btn-evaluaciones" onClick={() => navigate('/crear-evaluaciones')}>Crear Evaluaciones</button>
-        </aside>
+      {mostrarMensajeria && <Mensajeria />}
+
+      <aside className="buttons-container">
+        <button className="btn btn-info" onClick={() => navigate('/lista-cursos')}>Lista de Cursos</button>
+        <button className="btn btn-warning" onClick={() => navigate('/usuarios-listinst')}>Lista de Usuarios</button>
+        <button className="btn btn-evaluaciones" onClick={() => navigate('/crear-evaluaciones')}>Crear Evaluaciones</button>
+      </aside>
+
       <Footer />
     </div>
   );
 };
+
 export default InstructorAccess;

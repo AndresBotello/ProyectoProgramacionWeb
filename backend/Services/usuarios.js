@@ -320,6 +320,14 @@ const obtenerPuntosPorInstructor = async (instructor_id) => {
     }
 };
 
+// Método para obtener todos los alumnos
+// Obtener solo los usuarios con el rol de Instructor
+async function obtenerAlumnos() {
+    const rows = await db.query('SELECT * FROM usuarios WHERE tipo_usuario_id = ?', [1]); // Asegúrate de que el 3 es el tipo_usuario_id para instructores
+    const data = emptyOrRows(rows);
+    return { data };
+}
+
 
 module.exports = {
     Todos,
@@ -335,5 +343,6 @@ module.exports = {
     actualizarPerfil,
     obtenerPuntosPorInstructor,
     verificarCodigo,
+    obtenerAlumnos,
     eliminarUsuario
 };

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../UserAccessForm.css';
 import Footer from './Footer';
 import NotificationCenter from './NotificacionesCenter';
+import Mensajeria from './Mensajeria';
 
 
 const UserAccessForm = () => {
@@ -19,6 +20,7 @@ const UserAccessForm = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [newNombre, setNewNombre] = useState(nombreUsuario);
+  const [mostrarMensajeria, setMostrarMensajeria] = useState(false); 
   const [newCorreo, setNewCorreo] = useState(emailUsuario);
   const [newImagen, setNewImagen] = useState(null);
   const token = localStorage.getItem('token');
@@ -220,6 +222,7 @@ const UserAccessForm = () => {
           <p>{emailUsuario}</p>
           <p>¡Sigue aprendiendo con tus cursos!</p>
           <button className="btn-edit-profile" onClick={handleEditProfile}>Editar Perfil</button>
+          <button className="btn-mensajeria" onClick={() => setMostrarMensajeria(!mostrarMensajeria)}>Ir a Mensajería</button>
         </div>
       </div>
 
@@ -253,7 +256,8 @@ const UserAccessForm = () => {
           <button type="button" onClick={() => setIsEditing(false)}>Cancelar</button>
         </form>
       )}
-       
+        {mostrarMensajeria && <Mensajeria />}
+        
       <h2 className="filtro">Buscar cursos disponibles</h2>
       <div className="search-bar">
         <input
@@ -263,6 +267,8 @@ const UserAccessForm = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
+
+     
 
                 <h2>Cursos Disponibles</h2>
           {isLoading ? (

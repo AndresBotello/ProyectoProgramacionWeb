@@ -257,6 +257,19 @@ router.get('/puntos/:instructor_id', async (req, res) => {
     }
 });
 
+router.get('/alumnos', async (req, res) => {
+    try {
+        const resultados = await usuario.obtenerAlumnos();
+        if (resultados.error) {
+            return sendResponse(res, 403, resultados.error);
+        }
+        sendResponse(res, 200, 'Alumnos obtenidos exitosamente', resultados);
+    } catch (error) {
+        console.error('Error mientras se obtenían los alumnos', error.message);
+        sendResponse(res, 500, 'Error en el servidor');
+    }
+});
+
 
 
 

@@ -3,11 +3,11 @@ import '../UsuariosListIns.css';
 
 const UsuariosListIns = () => {
   const [puntos, setPuntos] = useState([]);
-  const [loading, setLoading] = useState(true); // Indicador de carga
-  const [error, setError] = useState(null); // Indicador de error
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null); 
 
   const token = localStorage.getItem('token');
-  const instructorId = localStorage.getItem('id'); // Asegúrate de que este ID se guarda correctamente en el localStorage
+  const instructorId = localStorage.getItem('id'); 
 
   useEffect(() => {
     const fetchPuntos = async () => {
@@ -28,7 +28,7 @@ const UsuariosListIns = () => {
         const data = await response.json();
 
         if (response.ok && data.data && Array.isArray(data.data.data)) {
-            setPuntos(data.data.data); // Accede correctamente a los datos dentro de 'data.data'
+            setPuntos(data.data.data); 
           } else {
             setError(data.message || 'Error desconocido al obtener los puntos.');
           }
