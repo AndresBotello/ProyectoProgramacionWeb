@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../UserAccessForm.css';
 import Footer from './Footer';
+import NotificationCenter from './NotificacionesCenter';
+
 
 const UserAccessForm = () => {
   const [cursos, setCursos] = useState([]);
@@ -204,6 +206,7 @@ const UserAccessForm = () => {
           <p className="banner-subtitle">Tu plataforma de cursos de arte</p>
         </div>
         <div className="header-right">
+          <NotificationCenter />
           <button className="btn-logout" onClick={handleLogout}>Cerrar Sesión</button>
         </div>
       </div>

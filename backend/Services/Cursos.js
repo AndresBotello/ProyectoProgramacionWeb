@@ -1,7 +1,7 @@
 const db = require('./db');
 const { emptyOrRows } = require('../helper');
 const cloudinary = require('../cloudinaryConfig');
-
+const NotificacionService = require('./Notificacion');
 
 async function obtenerTodosLosCursos() {
     const query = `
@@ -38,25 +38,36 @@ async function crearCurso(curso) {
     try {
         await connection.beginTransaction();
         
-        // Verificar si el contenido llega correctamente
-        console.log(curso.contenido);  // Verifica si el contenido se recibe correctamente en el backend
-
+        // Insertar el curso
         const result = await connection.query(
             `INSERT INTO cursos (titulo, descripcion, contenido, categoria_id, nivel_id, instructor_id, precio) 
             VALUES (?, ?, ?, ?, ?, ?, ?)`,
             [curso.titulo, curso.descripcion, curso.contenido, curso.categoria_id, curso.nivel_id, curso.instructor_id, curso.precio]
         );
 
-        await connection.commit();
-        if (result[0].affectedRows) {
-            return { message: 'Curso creado exitosamente', cursoId: result[0].insertId };
-        } else {
-            return { error: 'Error al crear el curso' };
+        const cursoId = result[0].insertId;
+
+        try {
+            // Enviar notificaciones usando la misma conexión
+            await NotificacionService.notificarNuevoCurso(cursoId, curso.instructor_id, connection);
+            
+            // Si todo va bien, hacer commit
+            await connection.commit();
+
+            return { 
+                message: 'Curso creado exitosamente y notificaciones enviadas', 
+                cursoId: cursoId 
+            };
+        } catch (notifError) {
+            // Si hay error en las notificaciones, hacer rollback
+            await connection.rollback();
+            console.error('Error al enviar notificaciones:', notifError);
+            throw notifError;
         }
     } catch (error) {
         await connection.rollback();
         console.error('Error al crear el curso:', error);
-        return { error: 'Error en el servidor al crear el curso' };
+        throw error;
     } finally {
         connection.release();
     }

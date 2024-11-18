@@ -10,6 +10,7 @@ const usuariosRouter = require('./Routes/usuarios');
 const cursosRouter = require("./Routes/Cursos");
 const categoriasNivelesRouter = require("./Routes/categoriasNiveles"); 
 const evaluacionesRouter = require("./Routes/Evaluaciones");
+const notificacionesRouter = require("./Routes/Notificaciones");
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
@@ -38,6 +39,7 @@ app.use("/api/categoriasniveles", categoriasNivelesRouter);
 app.use("/api/usuarios", usuariosRouter);
 app.use("/api/cursos", cursosRouter);
 app.use("/api/evaluaciones", evaluacionesRouter);
+app.use("/api/notificaciones", notificacionesRouter);
 
 app.listen(port, () => {
     console.log(`App listening at http://localhost:${port}`);

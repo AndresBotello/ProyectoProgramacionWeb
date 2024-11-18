@@ -58,7 +58,7 @@ const UsuariosListIns = () => {
               <th>Curso</th>
               <th>Fecha de Inscripción</th>
               <th>Puntos Obtenidos</th>
-              <th>Porcentaje de Completitud</th>
+              <th>Calificacion Total</th>
             </tr>
           </thead>
           <tbody>

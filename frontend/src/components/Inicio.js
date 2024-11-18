@@ -4,9 +4,9 @@ import logo from '../assets/proyectolog.jpeg';
 import '../Inicio.css';
 import Footer from './Footer';
 
-const CourseItem = ({ title, description, onClick }) => {
+const CourseItem = ({ title, description, onLoginClick }) => {
   return (
-    <div className="course-item" onClick={onClick}>
+    <div className="course-item" onClick={onLoginClick}>
       <h3>{title}</h3>
       <p>{description}</p>
     </div>
@@ -17,23 +17,16 @@ const Inicio = () => {
   const [cursos, setCursos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCursos = async () => {
       setIsLoading(true);
       try {
-        const response = await fetch('http://localhost:3000/api/cursos/todos', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
+        const response = await fetch('http://localhost:3000/api/cursos/todos');
         if (!response.ok) {
           throw new Error('Error al obtener cursos');
         }
-
         const data = await response.json();
         setCursos(data.data || []);
       } catch (error) {
@@ -45,15 +38,11 @@ const Inicio = () => {
     };
 
     fetchCursos();
-  }, [token]);
+  }, []); // Removido token de las dependencias ya que ya no lo necesitamos
 
-  // Maneja el acceso al curso
-  const handleCourseClick = (cursoId) => {
-    if (!token) {
-      navigate('/login');
-    } else {
-      navigate(`/cursos/${cursoId}`);
-    }
+  // Función simplificada que solo redirige al login
+  const handleLoginRedirect = () => {
+    navigate('/login');
   };
 
   return (
@@ -99,8 +88,8 @@ const Inicio = () => {
                   <CourseItem 
                     key={curso.id} 
                     title={curso.titulo} 
-                    description={curso.descripcion} 
-                    onClick={handleCourseClick} // Al hacer clic, verifica la autenticación
+                    description={curso.descripcion}
+                    onLoginClick={handleLoginRedirect}
                   />
                 ))
               ) : (
