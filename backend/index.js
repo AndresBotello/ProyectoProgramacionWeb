@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 
@@ -12,6 +13,8 @@ const categoriasNivelesRouter = require("./Routes/categoriasNiveles");
 const evaluacionesRouter = require("./Routes/Evaluaciones");
 const notificacionesRouter = require("./Routes/Notificaciones");
 const mensajeriaRouter = require("./Routes/Mensajeria");
+const certificarRouter = require("./Routes/Certificarse");
+
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
@@ -31,6 +34,10 @@ var corsOptions = {
 
 app.use(cors(corsOptions));
 
+
+app.use(express.static(path.join(__dirname, 'public')));
+
+
 app.get("/", (req, res) => {
     res.json({ message: "OK" });
 });
@@ -42,6 +49,9 @@ app.use("/api/cursos", cursosRouter);
 app.use("/api/evaluaciones", evaluacionesRouter);
 app.use("/api/notificaciones", notificacionesRouter);
 app.use("/api/mensajeria", mensajeriaRouter);
+app.use("/api/certificar", certificarRouter);
+
+
 
 
 app.listen(port, () => {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../InstructorAccess.css';
 import Footer from './Footer';
-import Mensajeria from './Mensajeria'; // Importa el componente Mensajeria
+import Mensajeria from './Mensajeria';
 
 const InstructorAccess = () => {
   const [nombreUsuario, setNombreUsuario] = useState(localStorage.getItem('nombre') || 'Usuario');
@@ -12,7 +12,7 @@ const InstructorAccess = () => {
   const [newNombre, setNewNombre] = useState(nombreUsuario);
   const [newCorreo, setNewCorreo] = useState(emailUsuario);
   const [newImagen, setNewImagen] = useState(null);
-  const [mostrarMensajeria, setMostrarMensajeria] = useState(false);  // Estado para controlar la visibilidad de la mensajería
+  const [mostrarMensajeria, setMostrarMensajeria] = useState(false); 
   const token = localStorage.getItem('token');
   const usuarioId = localStorage.getItem('id');
   const navigate = useNavigate();
@@ -161,3 +161,5 @@ const InstructorAccess = () => {
 };
 
 export default InstructorAccess;
+
+

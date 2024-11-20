@@ -1,349 +1,236 @@
-/* Estilo general para la página */
-body {
-  font-family: 'Open Sans', sans-serif;
-  background-color: #fbf9f8;
-  margin: 0;
+/* Variables para colores y valores comunes */
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+  --accent-color: #e74c3c;
+  --text-color: #2c3e50;
+  --background-color: #f5f6fa;
+  --card-background: #ffffff;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
 }
 
+/* Estilos base del contenedor */
 .home-container {
-  display: flex;
-  flex-direction: column;
   min-height: 100vh;
+  background-color: var(--background-color);
+  color: var(--text-color);
 }
 
-/* Header */
+/* Header y Banner */
 .home-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #5a4860;
-  color: #f4f1f1;
-  padding: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.home-header h1 {
-  font-size: 2rem;
+  position: relative;
+  width: 100%;
+  background: linear-gradient(135deg, var(--primary-color), #2980b9);
   color: white;
+  padding: 2rem 0;
+  margin-bottom: 2rem;
 }
 
-.subtitle {
-  font-size: 1rem;
-  color: #d2dae2;
-}
-
-.btn-logout {
-  background-color: #dc3545;
-  border: none;
-  padding: 10px 15px;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn-logout:hover {
-  background-color: #b12636;
-}
-
-/* Edit Profile Buttons */
-.btn-editar-datos {
-  background: linear-gradient(135deg, #6478df 0%, #670b20 100%);
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease; /* Transición suave */
-}
-
-.btn-guardar-cambios, 
-.btn-cancelar {
-  background-color: cadetblue;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease; /* Transición suave */
-}
-
-.btn-guardar-cambios:hover,
-.btn-cancelar:hover {
-  opacity: 0.8; /* Efecto de opacidad al pasar el mouse */
-}
-
-/* Main Buttons */
-.buttons-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 20px;
-}
-
-.btn {
-  background-color: #3d4852;
-  color: white;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn:hover {
-  background-color: #0056b3;
-}
-
-/* Content Section */
-.content-section {
-  flex: 1;
-  padding: 20px;
-}
-
-.cursos-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  padding: 20px;
-}
-
-.curso-card {
-  background: linear-gradient(135deg, #6a82fb 0%, #fc5c7d 100%);
-  padding: 20px;
-  border-radius: 12px;
-  color: white;
+.banner {
   text-align: center;
-  transition: transform 0.2s, box-shadow 0.2s;
-  cursor: pointer;
+  padding: 2rem;
 }
 
-.curso-card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
-}
-
-.progress-bar {
-  height: 10px;
-  background-color: #ddd;
-  border-radius: 5px;
-  margin: 5px 0;
-}
-
-.progress {
-  height: 100%;
-  background-color: #4caf50;
-  border-radius: 5px;
-}
-
-/* Banner en la parte superior */
-.profile-banner {
-  background: linear-gradient(90deg, #47b3b3, #003366);
-  color: white;
-  padding: 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.profile-banner h1 {
-  margin: 0;
+.banner-title {
   font-size: 2.5rem;
-  letter-spacing: 1.5px;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
 }
 
 .banner-subtitle {
   font-size: 1.2rem;
-  color: #d2dae2;
+  opacity: 0.9;
 }
 
+.header-right {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+/* Botón de cerrar sesión */
 .btn-logout {
-  background-color: #e74c3c;
+  background-color: var(--accent-color);
   color: white;
   border: none;
-  padding: 10px 15px;
-  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: var(--transition);
 }
 
 .btn-logout:hover {
   background-color: #c0392b;
+  transform: translateY(-2px);
 }
 
 /* Sección de perfil */
 .profile-section {
   display: flex;
   align-items: center;
-  margin-bottom: 40px;
-  padding: 0 20px;
+  gap: 2rem;
+  background-color: var(--card-background);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  margin: 0 2rem 2rem;
 }
 
 .profile-picture img {
-  border-radius: 50%;
   width: 150px;
   height: 150px;
+  border-radius: 50%;
   object-fit: cover;
-  margin-right: 30px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
+  border: 3px solid var(--primary-color);
 }
 
-.profile-picture img:hover {
-  transform: scale(1.05);
+.profile-info {
+  flex: 1;
 }
 
 .profile-info h2 {
-  font-size: 2.5rem;
-  margin: 0;
-  color: #333;
+  margin: 0 0 0.5rem;
+  color: var(--text-color);
 }
 
 .profile-info p {
-  font-size: 1.2rem;
-  color: #555;
-  margin-top: 10px;
+  color: #666;
+  margin-bottom: 1rem;
 }
 
-.btn-edit-profile {
-  background-color: #3498db;
-  color: white;
-  border: none;
-  padding: 10px 20px;
+/* Formulario de edición de perfil */
+.edit-profile-form {
+  background-color: var(--card-background);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: var(--shadow);
+  margin: 0 2rem 2rem;
+}
+
+.edit-profile-form h3 {
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+}
+
+.edit-profile-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+
+.edit-profile-form input {
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
   font-size: 1rem;
+}
+
+.edit-profile-form input[type="file"] {
+  border: none;
+  padding: 0.5rem 0;
+}
+
+/* Botones de navegación */
+.buttons-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.btn {
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  margin-top: 15px;
-  transition: background-color 0.3s ease;
+  transition: var(--transition);
+  text-align: center;
 }
 
-.btn-edit-profile:hover {
-  background-color: #2980b9;
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
 }
 
-/* Estilo para la lista de cursos */
+.btn-crearcurso { background-color: #063a52; color: white; }
+.btn-info { background-color: #063a52; color: white; }
+.btn-warning { background-color: #063a52; color: white; }
+.btn-evaluaciones { background-color: #063a52; color: white; }
+.btn-light { background-color: #063a52; color: white; }
+
+/* Sección de cursos */
+.content-section {
+  padding: 2rem;
+}
+
+.content-section h2 {
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
 .cursos-list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  padding: 20px;
+  gap: 2rem;
+  margin-top: 2rem;
 }
 
 .curso-card {
-  background-color: #f5f5f5;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  background-color: var(--card-background);
+  border-radius: 10px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  cursor: pointer;
 }
 
 .curso-card:hover {
-  transform: scale(1.02);
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 .curso-card h3 {
-  margin-top: 0;
-  color: #333;
-  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--text-color);
 }
 
 .curso-card p {
-  color: #555;
-  margin: 5px 0;
+  color: #666;
+  margin-bottom: 0.5rem;
 }
 
-.curso-card button {
-  background-color: #2ecc71;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.curso-card button:hover {
-  background-color: #27ae60;
-}
-
-/* Barra de búsqueda */
-.search-bar {
-  display: flex;
-  justify-content: center;
-  padding: 20px;
-}
-
-.search-bar input {
-  width: 100%;
-  max-width: 400px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 1rem;
-}
-
-/* Estilo para la sección de filtros */
-.filtro {
-  text-align: center;
-  font-size: 1.8rem;
-  color: #333;
-  margin-top: 20px;
-}
-
-/* Responsive design */
+/* Responsive Design */
 @media (max-width: 768px) {
-  .home-header {
+  .profile-section {
     flex-direction: column;
     text-align: center;
+    padding: 1.5rem;
+    margin: 0 1rem 1.5rem;
   }
 
   .buttons-container {
-    justify-content: center;
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .content-section {
+    padding: 1rem;
   }
 
   .cursos-list {
     grid-template-columns: 1fr;
   }
 
-  .home-header h1 {
-    font-size: 1.8rem; /* Tamaño de fuente ajustado para pantallas pequeñas */
+  .banner-title {
+    font-size: 2rem;
   }
 
-  .profile-section {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .profile-picture img {
-    margin-right: 0;
-    margin-bottom: 20px;
-  }
-
-  .edit-profile-form {
-    width: 90%;
-  }
-
-  .btn-logout {
-    padding: 8px 12px;
-    font-size: 0.9rem;
-  }
-
-  .cursos-list {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .home-header h1 {
-    font-size: 1.5rem; /* Tamaño de fuente más pequeño */
-  }
-
-  .home-header .subtitle {
-    font-size: 0.9rem; /* Tamaño de fuente más pequeño */
-  }
-
-  .btn {
-    width: 100%; /* Botones ocupan todo el ancho en pantallas pequeñas */
-    padding: 15px; /* Más relleno para mejor clicabilidad */
+  .banner-subtitle {
+    font-size: 1rem;
   }
 }

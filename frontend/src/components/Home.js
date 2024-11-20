@@ -167,7 +167,7 @@ const Home = () => {
 
         {/* Botones de navegación */}
         <aside className="buttons-container">
-          <button className="btn btn-secondary" onClick={() => navigate('/crear-curso')}>Crear Cursos</button>
+          <button className="btn btn-crearcurso" onClick={() => navigate('/crear-curso')}>Crear Cursos</button>
           <button className="btn btn-info" onClick={() => navigate('/lista-cursos')}>Lista de Cursos</button>
           <button className="btn btn-warning" onClick={() => navigate('/user-management')}>Gestionar Usuarios</button>
           <button className="btn btn-evaluaciones" onClick={() => navigate('/crear-evaluaciones')}>Crear Evaluaciones</button>

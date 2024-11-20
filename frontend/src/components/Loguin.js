@@ -26,10 +26,24 @@ const Loguin = ({ onLogin }) => {
   const [newPassword, setNewPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null); 
   const navigate = useNavigate();
 
+  // Función de validación de contraseña reutilizable
+  const validatePassword = (password) => {
+    if (!password || password.length < 6) {
+      return "La contraseña debe tener al menos 6 caracteres.";
+    }
+    
+    const strongPasswordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
+    if (!strongPasswordPattern.test(password)) {
+      return "La contraseña debe contener al menos una letra mayúscula, un número y un carácter especial.";
+    }
+
+    return null;
+  };
 
   const functAutenticacion = async (e) => {
     e.preventDefault();
@@ -37,7 +51,6 @@ const Loguin = ({ onLogin }) => {
     setError(null);
     setSuccessMessage(null);
   
-    // Validaciones solo para el registro
     if (registrando) {
       if (!nombre || !email || !password) {
         setError("Por favor, completa todos los campos.");
@@ -45,7 +58,6 @@ const Loguin = ({ onLogin }) => {
         return;
       }
   
-      // Validar formato de correo electrónico
       const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       if (!emailPattern.test(email)) {
         setError("Por favor, ingresa un correo electrónico válido.");
@@ -53,17 +65,9 @@ const Loguin = ({ onLogin }) => {
         return;
       }
       
-
-      if (password.length < 6) {
-        setError("La contraseña debe tener al menos 6 caracteres.");
-        setLoading(false);
-        return;
-      }
-      
-      // Validar si la contraseña cumple con los requisitos de fortaleza (mayúscula, número y carácter especial)
-      const strongPasswordPattern = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
-      if (!strongPasswordPattern.test(password)) {
-        setError("La contraseña debe contener al menos una letra mayúscula, un número y un carácter especial.");
+      const passwordError = validatePassword(password);
+      if (passwordError) {
+        setError(passwordError);
         setLoading(false);
         return;
       }
@@ -107,7 +111,6 @@ const Loguin = ({ onLogin }) => {
       setLoading(false);
     }
   };
-  
 
   const handlePasswordRecovery = async () => {
     try {
@@ -127,6 +130,13 @@ const Loguin = ({ onLogin }) => {
   };
 
   const handleVerifyCodeAndResetPassword = async () => {
+    // Validar la nueva contraseña antes de enviar
+    const passwordError = validatePassword(newPassword);
+    if (passwordError) {
+      setError(passwordError);
+      return;
+    }
+
     try {
       const response = await fetch('http://localhost:3000/api/usuarios/reset-password', {
         method: 'POST',
@@ -228,6 +238,8 @@ const Loguin = ({ onLogin }) => {
           {isRecovering && !isVerifying && (
             <>
               <h2>Recuperar Contraseña</h2>
+              {error && <p className="error-message">{error}</p>}
+              {successMessage && <p className="success-message">{successMessage}</p>}
               <input 
                 type="email" 
                 placeholder="Correo electrónico" 
@@ -248,6 +260,8 @@ const Loguin = ({ onLogin }) => {
           {isVerifying && registrando && (
             <>
               <h2>Verificar Correo Electrónico</h2>
+              {error && <p className="error-message">{error}</p>}
+              {successMessage && <p className="success-message">{successMessage}</p>}
               <input 
                 type="text" 
                 placeholder="Código de verificación" 
@@ -265,6 +279,8 @@ const Loguin = ({ onLogin }) => {
           {isVerifying && isRecovering && (
             <>
               <h2>Verificar Código y Restablecer Contraseña</h2>
+              {error && <p className="error-message">{error}</p>}
+              {successMessage && <p className="success-message">{successMessage}</p>}
               <input 
                 type="text" 
                 placeholder="Código de recuperación" 
@@ -273,14 +289,26 @@ const Loguin = ({ onLogin }) => {
                 onChange={(e) => setRecoveryCode(e.target.value)} 
                 required 
               />
-              <input 
-                type="password" 
-                placeholder="Nueva Contraseña" 
-                className="input-field" 
-                value={newPassword} 
-                onChange={(e) => setNewPassword(e.target.value)} 
-                required 
-              />
+              <div className="password-field">
+                <input 
+                  type={showNewPassword ? 'text' : 'password'} 
+                  placeholder="Nueva Contraseña" 
+                  className="input-field" 
+                  value={newPassword} 
+                  onChange={(e) => setNewPassword(e.target.value)} 
+                  required 
+                />
+                <span 
+                  className="toggle-password" 
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {showNewPassword ? "Ocultar" : "Mostrar"}
+                </span>
+              </div>
+              <p className="password-requirements">
+                La contraseña debe tener al menos 6 caracteres, una letra mayúscula, un número y un carácter especial.
+              </p>
               <button onClick={handleVerifyCodeAndResetPassword} className="btn-submit">
                 Restablecer Contraseña
               </button>

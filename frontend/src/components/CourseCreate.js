@@ -16,15 +16,14 @@ const CourseCreate = () => {
   });
 
   const [categorias, setCategorias] = useState([]);
-  /*const [nuevaCategoria, setNuevaCategoria] = useState('');*/
   const [niveles, setNiveles] = useState([]);
   const [instructores, setInstructores] = useState([]);
   const [lecciones, setLecciones] = useState([{ 
     titulo: '', 
     contenido: '', 
     orden: 1,
-    imagen: null, // Changed to store File object
-    video: null,  // Changed to store File object
+    imagen: null,
+    video: null,
     imagen_url: '',
     video_url: ''
   }]);
@@ -68,7 +67,6 @@ const CourseCreate = () => {
     setCurso({ ...curso, [name]: value });
   };
 
-
   const handleLeccionChange = (index, e) => {
     const { name, value } = e.target;
     const nuevasLecciones = [...lecciones];
@@ -102,6 +100,15 @@ const CourseCreate = () => {
     } else {
       alert('Solo puedes agregar hasta 10 lecciones');
     }
+  };
+
+  const deleteLeccion = (index) => {
+    const nuevasLecciones = lecciones.filter((_, i) => i !== index);
+    // Reordenar las lecciones restantes
+    nuevasLecciones.forEach((leccion, i) => {
+      leccion.orden = i + 1;
+    });
+    setLecciones(nuevasLecciones);
   };
 
   const handleSubmit = async (e) => {
@@ -156,7 +163,7 @@ const CourseCreate = () => {
 
       setMensajeExito('Curso y lecciones creados correctamente');
       setTimeout(() => {
-         
+        navigate('/cursos');
       }, 2000);
 
     } catch (error) {
@@ -235,7 +242,16 @@ const CourseCreate = () => {
           <h3>Lecciones</h3>
           {lecciones.map((leccion, index) => (
             <div key={index} className="leccion-container">
-              <h4>Lección {index + 1}</h4>
+              <div className="leccion-header">
+                <h4>Lección {index + 1}</h4>
+                <button 
+                  type="button"
+                  onClick={() => deleteLeccion(index)}
+                  className="delete-button"
+                >
+                  Eliminar
+                </button>
+              </div>
               <div>
                 <label>Título</label>
                 <input 
@@ -273,11 +289,13 @@ const CourseCreate = () => {
               </div>
             </div>
           ))}
-          <button type="button" onClick={addLeccion}>Añadir Lección</button>
+          <button type="button" onClick={addLeccion} className="add-button">
+            Añadir Lección
+          </button>
         </div>
 
-        <div>
-          <button type="submit" disabled={isUploading}>
+        <div className="submit-container">
+          <button type="submit" disabled={isUploading} className="submit-button">
             {isUploading ? 'Creando curso...' : 'Crear Curso'}
           </button>
         </div>

@@ -216,6 +216,131 @@ async function obtenerCursosFiltrados(categoria, nivel) {
 }
 
 
+// Función para guardar el progreso de una lección
+async function guardarProgresoLeccion(usuarioId, cursoId, leccionId) {
+    const connection = await db.pool.getConnection();
+    try {
+        await connection.beginTransaction();
+        
+        // Verificar si ya existe un registro de progreso
+        const [existingProgress] = await connection.query(
+            'SELECT * FROM progreso_lecciones WHERE usuario_id = ? AND curso_id = ? AND leccion_id = ?',
+            [usuarioId, cursoId, leccionId]
+        );
+
+        if (existingProgress.length === 0) {
+            // Si no existe, crear nuevo registro
+            await connection.query(
+                'INSERT INTO progreso_lecciones (usuario_id, curso_id, leccion_id, completada, fecha_completado) VALUES (?, ?, ?, TRUE, NOW())',
+                [usuarioId, cursoId, leccionId]
+            );
+        }
+
+        await connection.commit();
+        return { success: true };
+    } catch (error) {
+        await connection.rollback();
+        console.error('Error al guardar progreso:', error);
+        throw error;
+    } finally {
+        connection.release();
+    }
+}
+
+// Función para obtener el progreso del curso
+async function obtenerProgresoCurso(usuarioId, cursoId) {
+    try {
+        const rows = await db.query(
+            'SELECT leccion_id FROM progreso_lecciones WHERE usuario_id = ? AND curso_id = ? AND completada = TRUE',
+            [usuarioId, cursoId]
+        );
+        return rows.map(row => row.leccion_id);
+    } catch (error) {
+        console.error('Error al obtener progreso:', error);
+        throw error;
+    }
+}
+
+
+
+async function guardarCalificacion(usuarioId, cursoId, calificacion, comentario) {
+    const connection = await db.pool.getConnection();
+    try {
+        await connection.beginTransaction();
+
+        // Verificar si el usuario está inscrito en el curso
+        const [inscripcion] = await connection.query(
+            'SELECT id FROM inscripciones WHERE usuario_id = ? AND curso_id = ?',
+            [usuarioId, cursoId]
+        );
+
+        if (inscripcion.length === 0) {
+            throw new Error('El usuario no está inscrito en este curso');
+        }
+
+        // Verificar si ya existe una calificación
+        const [calificacionExistente] = await connection.query(
+            'SELECT id FROM calificaciones WHERE usuario_id = ? AND curso_id = ?',
+            [usuarioId, cursoId]
+        );
+
+        let resultado;
+        if (calificacionExistente.length > 0) {
+            // Actualizar calificación existente
+            const [updateResult] = await connection.query(
+                `UPDATE calificaciones 
+                 SET calificacion = ?, 
+                     comentario = ?, 
+                     fecha_actualizacion = CURRENT_TIMESTAMP 
+                 WHERE usuario_id = ? AND curso_id = ?`,
+                [calificacion, comentario || null, usuarioId, cursoId]
+            );
+            resultado = {
+                id: calificacionExistente[0].id,
+                actualizado: true,
+                affected_rows: updateResult.affectedRows
+            };
+        } else {
+            // Insertar nueva calificación
+            const [insertResult] = await connection.query(
+                `INSERT INTO calificaciones 
+                 (usuario_id, curso_id, calificacion, comentario, fecha_creacion) 
+                 VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+                [usuarioId, cursoId, calificacion, comentario || null]
+            );
+            resultado = {
+                id: insertResult.insertId,
+                actualizado: false,
+                affected_rows: insertResult.affectedRows
+            };
+        }
+
+        // Actualizar la calificación promedio del curso
+        await connection.query(
+            `UPDATE cursos 
+             SET calificacion_promedio = (
+                SELECT AVG(calificacion) 
+                FROM calificaciones 
+                WHERE curso_id = ?
+             )
+             WHERE id = ?`,
+            [cursoId, cursoId]
+        );
+
+        await connection.commit();
+        return resultado;
+    } catch (error) {
+        if (connection) {
+            await connection.rollback();
+        }
+        throw error;
+    } finally {
+        if (connection) {
+            connection.release();
+        }
+    }
+}
+
 module.exports = {
     crearLeccion,
     obtenerTodosLosCursos,
@@ -224,7 +349,10 @@ module.exports = {
     actualizarCurso,
     inscribirEstudiante,
     verificarInscripcion,
+    obtenerProgresoCurso,
+    guardarProgresoLeccion,
     obtenerInstructores,
     obtenerCursosFiltrados,
+    guardarCalificacion,
     eliminarCurso
 };

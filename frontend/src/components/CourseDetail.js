@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { X } from 'lucide-react';
 import '../CourseDetail.css';
 
 const CourseDetail = () => {
@@ -16,16 +17,47 @@ const CourseDetail = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [evaluationError, setEvaluationError] = useState(null);
   const [evaluacionDisponible, setEvaluacionDisponible] = useState(true);
+  const [isLoadingProgress, setIsLoadingProgress] = useState(true);
+  const [showRatingModal, setShowRatingModal] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [certificateUrl, setCertificateUrl] = useState(null);
+  const [isSubmittingRating, setIsSubmittingRating] = useState(false);
+  const [studentName, setStudentName] = useState('');
+  const [isGeneratingCertificate, setIsGeneratingCertificate] = useState(false);
+  const [certificateError, setCertificateError] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [ratingError, setRatingError] = useState('');
+  const usuario_id = localStorage.getItem('id');
   const token = localStorage.getItem('token');
 
   useEffect(() => {
     const savedEvaluationStatus = localStorage.getItem(`evaluation_submitted_${courseId}`);
     const savedScore = localStorage.getItem(`evaluation_score_${courseId}`);
+    const fetchStudentName = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/api/usuarios/${usuario_id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) throw new Error('Error al obtener datos del usuario');
+        
+        const data = await response.json();
+        setStudentName(data.data.nombre); // Adjust according to your API response structure
+      } catch (error) {
+        console.error('Error fetching student name:', error);
+      }
+    };
+
     
     if (savedEvaluationStatus === 'true' && savedScore) {
       setEvaluationSubmitted(true);
       setScore(JSON.parse(savedScore));
     }
+    fetchStudentName();
   }, [courseId]);
 
   const verificarEstadoEvaluacion = async (evaluacionId) => {
@@ -60,19 +92,163 @@ const CourseDetail = () => {
     }
   };
 
-  const loadProgress = (lecciones) => {
-    const savedProgress = JSON.parse(localStorage.getItem(`progress_${courseId}`)) || [];
-    const completed = lecciones
-      .filter((leccion) => savedProgress.includes(leccion.id))
-      .map((leccion) => leccion.id);
-    setCompletedLessons(completed);
+  const loadProgressFromDB = async () => {
+    try {
+        const response = await fetch(
+            `http://localhost:3000/api/cursos/progreso/${usuario_id}/${courseId}`,
+            {
+                headers: { 'Authorization': `Bearer ${token}` }
+            }
+        );
+        if (!response.ok) throw new Error('Error al cargar progreso');
+        const data = await response.json();
+        setCompletedLessons(data.data);
+    } catch (error) {
+        console.error('Error al cargar progreso:', error);
+    } finally {
+        setIsLoadingProgress(false);
+    }
   };
 
-  const handleLessonClick = (lessonId) => {
-    if (!completedLessons.includes(lessonId)) {
-      const updatedCompleted = [...completedLessons, lessonId];
-      setCompletedLessons(updatedCompleted);
-      localStorage.setItem(`progress_${courseId}`, JSON.stringify(updatedCompleted));
+  const loadProgress = (lecciones) => {
+      const savedProgress = JSON.parse(localStorage.getItem(`progress_${courseId}`)) || [];
+      const completed = lecciones
+        .filter((leccion) => savedProgress.includes(leccion.id))
+        .map((leccion) => leccion.id);
+      setCompletedLessons(completed);
+  };
+
+    // Modificar handleLessonClick para guardar en la base de datos
+  const handleLessonClick = async (lessonId) => {
+      if (!completedLessons.includes(lessonId)) {
+          try {
+              await fetch('http://localhost:3000/api/cursos/progreso', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${token}`
+                  },
+                  body: JSON.stringify({
+                      usuario_id,
+                      curso_id: courseId,
+                      leccion_id: lessonId
+                  })
+              });
+
+              const updatedCompleted = [...completedLessons, lessonId];
+              setCompletedLessons(updatedCompleted);
+              
+              // Mantener localStorage como respaldo
+              localStorage.setItem(`progress_${courseId}`, JSON.stringify(updatedCompleted));
+          } catch (error) {
+              console.error('Error al guardar progreso:', error);
+          }
+      }
+  };
+
+  const handleCertificateGeneration = async () => {
+    setIsGeneratingCertificate(true);
+    setCertificateError(null);
+  
+    const storedName = localStorage.getItem('nombre');
+    const nameToUse = studentName || storedName || 'Estudiante';
+  
+    try {
+      const certificateResponse = await fetch('http://localhost:3000/api/certificar/generar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          usuario_id: usuario_id,
+          curso_id: courseId,
+          nombre: nameToUse,
+          nombre_curso: curso?.titulo
+        })
+      });
+  
+      if (!certificateResponse.ok) {
+        throw new Error('Error al generar el certificado');
+      }
+  
+      const certificateData = await certificateResponse.json();
+  
+      if (certificateData.success) {
+        // Change this line to use the full URL
+        setCertificateUrl(`http://localhost:3000${certificateData.data.certificadoUrl}`);
+      } else {
+        throw new Error(certificateData.message || 'Error al generar el certificado');
+      }
+    } catch (error) {
+      console.error('Error generating certificate:', error);
+      setCertificateError(error.message || 'Error al generar el certificado');
+    } finally {
+      setIsGeneratingCertificate(false);
+    }
+  };
+
+
+  const handleSubmitRating = async () => {
+    // Validación de calificación
+    if (rating === 0) {
+      setRatingError('Por favor selecciona una calificación');
+      return;
+    }
+
+    setRatingError('');
+    setIsSubmittingRating(true);
+    try {
+      // Asegurarse de que el endpoint es correcto y el token está presente
+      if (!token) {
+        throw new Error('No se encontró el token de autenticación');
+      }
+
+      const response = await fetch(`http://localhost:3000/api/cursos/${courseId}/calificaciones`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          usuario_id: parseInt(usuario_id), // Asegurarse de que usuario_id sea un número
+          curso_id: parseInt(courseId),     // Asegurarse de que courseId sea un número
+          calificacion: parseInt(rating),   // Asegurarse de que rating sea un número
+          comentario: comment.trim() || null  // Eliminar espacios en blanco innecesarios
+        })
+      });
+
+      // Verificar si la respuesta es JSON antes de intentar parsearla
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        // Si no es JSON, obtener el texto de la respuesta para debugging
+        const textResponse = await response.text();
+        console.error('Respuesta no JSON:', textResponse);
+        throw new Error('El servidor no respondió con JSON');
+      }
+
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.message || 'Error al enviar la calificación');
+      }
+
+      if (data.success) {
+        setShowRatingModal(false);
+        setSuccessMessage('¡Gracias por tu calificación! Tu opinión nos ayuda a mejorar.');
+        
+        // Opcional: cerrar el modal después de un tiempo
+        setTimeout(() => {
+          setSuccessMessage('');
+        }, 3000);
+      } else {
+        throw new Error(data.message || 'Error al procesar la calificación');
+      }
+    } catch (error) {
+      console.error('Error al enviar calificación:', error);
+      setRatingError(error.message || 'Error al enviar la calificación. Por favor intente nuevamente.');
+    } finally {
+      setIsSubmittingRating(false);
     }
   };
 
@@ -231,6 +407,8 @@ const CourseDetail = () => {
         setCurso(data.data.curso);
         setLecciones(data.data.lecciones || []);
         loadProgress(data.data.lecciones || []);
+
+        await loadProgressFromDB();
       } catch (error) {
         setError('Error al obtener el curso: ' + error.message);
       } finally {
@@ -265,6 +443,111 @@ const CourseDetail = () => {
     fetchEvaluacion();
   }, [courseId, token]);
 
+  const RatingModal = () => (
+    <div className="rating-modal">
+      <div className="rating-content relative">
+        <button
+          onClick={() => setShowRatingModal(false)}
+          className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full"
+          aria-label="Cerrar modal"
+        >
+          <X size={24} />
+        </button>
+
+        <h3 className="text-xl font-semibold mb-4">¡Felicitaciones por completar el curso!</h3>
+        
+        {/* Sección de Certificado */}
+        <div className="mb-6">
+          {certificateError ? (
+            <div className="text-red-600 mb-4">
+              <p>{certificateError}</p>
+              <button 
+                onClick={handleCertificateGeneration}
+                disabled={isGeneratingCertificate}
+                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                {isGeneratingCertificate ? 'Generando...' : 'Intentar nuevamente'}
+              </button>
+            </div>
+          ) : certificateUrl ? (
+            <div className="text-center">
+              <p className="text-green-600 mb-2">¡Tu certificado está listo!</p>
+              <a
+                href={certificateUrl}
+                download
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                Descargar Certificado
+              </a>
+            </div>
+          ) : (
+            <div className="text-center">
+              <p>Generando tu certificado...</p>
+              <div className="loading-spinner"></div>
+            </div>
+          )}
+        </div>
+
+        {/* Sección de Calificación */}
+        <div className="rating-section">
+          <h4 className="text-lg font-medium mb-2">Califica tu experiencia con el curso</h4>
+          
+          {successMessage && (
+            <div className="mb-4 p-2 bg-green-100 text-green-700 rounded">
+              {successMessage}
+            </div>
+          )}
+          
+          <div className="stars-container mb-4">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                className={`star-button ${rating >= star ? 'active' : ''}`}
+                onClick={() => setRating(star)}
+                disabled={isSubmittingRating}
+                aria-label={`Calificar ${star} estrellas`}
+              >
+                ★
+              </button>
+            ))}
+          </div>
+          
+          {ratingError && (
+            <p className="text-red-600 mb-4">{ratingError}</p>
+          )}
+
+          <textarea
+            className="w-full p-3 border rounded-md mb-4"
+            placeholder="Comparte tu opinión sobre el curso (opcional)"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            disabled={isSubmittingRating}
+            maxLength={500}
+            rows={4}
+          />
+          
+          <div className="flex justify-end gap-4">
+            <button 
+              onClick={() => setShowRatingModal(false)}
+              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md"
+              disabled={isSubmittingRating}
+            >
+              Cerrar
+            </button>
+            <button 
+              onClick={handleSubmitRating}
+              disabled={isSubmittingRating || rating === 0}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md disabled:bg-gray-400"
+            >
+              {isSubmittingRating ? 'Enviando...' : 'Enviar Calificación'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
   return (
     <div className="course-detail-layout">
       <aside className="course-sidebar">
@@ -397,6 +680,26 @@ const CourseDetail = () => {
                 )}
               </section>
             )}
+
+            {evaluacion && evaluationSubmitted && score && score.score >= 70 && (
+              <section className="course-completion">
+                <h3>¡Felicitaciones! Has aprobado el curso</h3>
+                {/* Replace the existing button with the new code */}
+                {!showRatingModal && (
+                  <button 
+                    onClick={() => {
+                      handleCertificateGeneration();
+                      setShowRatingModal(true);
+                    }} 
+                    className="certificate-button"
+                  >
+                    Obtener Certificado
+                  </button>
+                )}
+              </section>
+            )}
+
+            {showRatingModal && <RatingModal />}
           </>
         ) : (
           <p>No se pudo cargar la información del curso.</p>

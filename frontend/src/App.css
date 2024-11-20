@@ -1,235 +1,204 @@
-/* General */
-* {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Montserrat', sans-serif;
-  background-color: #f4f6f9;
-  margin: 0;
-  padding: 0;
-}
-
-/* Contenedor principal del login */
+/* Main Container Styles */
 .loguin-container {
   min-height: 100vh;
+  background: linear-gradient(135deg, #f6f8fd 0%, #f1f4f9 100%);
   display: flex;
   flex-direction: column;
 }
 
-/* Barra de navegación del login */
+/* Navigation Bar Styles */
 .navbar-loguin {
+  background-color: #5a4a60;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
-  justify-content: space-between;
-  padding: 20px;
-  background-color: #5a4860;
-  color: white;
+  gap: 2rem;
 }
 
 .navbar-loguin a {
-  color: white;
+  color: #dbe4f0;
   text-decoration: none;
-  margin: 0 15px;
-  font-size: 1.4rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
 }
 
-/* Contenido principal del login */
+.navbar-loguin a:hover {
+  color: #3b82f6;
+}
+
+/* Login Content Layout */
 .loguin-content {
-  display: flex;
   flex: 1;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  gap: 40px;
+  display: flex;
+  padding: 2rem;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-/* Caja del formulario */
+/* Form Box Styles */
 .form-box {
-  background-color: white;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
+  background: #ffffff;
+  padding: 2.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   width: 100%;
-  margin-right: 50px;
+  max-width: 400px;
+  margin: 2rem auto;
 }
 
-/* Estilo para los campos de entrada */
+.form-box h2 {
+  color: #1e293b;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Form Input Styles */
 .input-field {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 20px;
-  border-radius: 5px;
-  border: 1px solid #ddd;
-  font-size: 16px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
 }
 
 .input-field:focus {
   outline: none;
-  border-color: #004080;
-  box-shadow: 0 0 5px rgba(0, 64, 128, 0.5);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Campo de contraseña con toggle */
+/* Password Field Container */
 .password-field {
   position: relative;
+  margin-bottom: 1rem;
 }
 
 .toggle-password {
   position: absolute;
-  right: 10px;
-  top: 12px;
-  font-size: 14px;
-  color: #4e5357;
-  cursor: pointer;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #64748b;
+  font-size: 0.875rem;
 }
 
-/* Mensajes de error y éxito */
-.error-message {
-  color: #d9534f;
-  font-size: 14px;
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-.success-message {
-  color: #5cb85c;
-  font-size: 14px;
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-/* Botón de envío */
+/* Button Styles */
 .btn-submit {
   width: 100%;
-  padding: 15px;
-  background-color: #4e5357;
-  border: none;
-  border-radius: 5px;
+  padding: 0.75rem;
+  background-color: #3b82f6;
   color: white;
-  font-size: 18px;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 500;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .btn-submit:hover {
-  background-color: #087dd0;
+  background-color: #2563eb;
 }
 
-/* Botón para cambiar entre registro e inicio de sesión */
+.btn-submit:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
 .btn-toggle {
-  margin-top: 20px;
-  background-color: transparent;
+  width: 100%;
+  padding: 0.75rem;
+  background: transparent;
+  color: #64748b;
   border: none;
-  color: #000a0c;
-  font-size: 16px;
+  margin-top: 1rem;
   cursor: pointer;
+  transition: color 0.3s ease;
 }
 
 .btn-toggle:hover {
-  text-decoration: underline;
-  background-color: #6ebfe2;
+  color: #3b82f6;
 }
 
-/* Sección de redes sociales */
-.social-media {
-  text-align: center;
-  margin-top: 30px;
+/* Message Styles */
+.error-message {
+  background-color: #fee2e2;
+  color: #dc2626;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
 }
 
-.social-icons {
-  display: flex;
-  justify-content: center;
+.success-message {
+  background-color: #dcfce7;
+  color: #16a34a;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
 }
 
-.icon-social {
-  width: 40px;
-  margin: 0 10px;
-}
-
-/* Sección de la imagen de fondo */
-.image-section-loguin {
-  flex: 1;
-  background-image: url('./assets/inicio.jpg');
-  background-size: cover;
-  background-position: center;
-  border-radius: 10px;
-}
-
-/* Contenedor centrado para imágenes y descripciones */
+/* Info Box Styles */
 .centered-container {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 50px;
 }
 
 .info-box {
-  display: flex;
-  gap: 30px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  padding: 2rem;
 }
 
 .info-item {
   text-align: center;
-  width: 180px;
+  transition: transform 0.3s ease;
+}
+
+.info-item:hover {
+  transform: translateY(-5px);
 }
 
 .logo-image {
   width: 100%;
-  height: 300px;
+  height: 200px;
   object-fit: cover;
-  margin-bottom: 15px;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .logo-description {
-  font-size: 14px;
-  color: #333;
+  margin-top: 1rem;
+  color: #475569;
+  font-size: 0.875rem;
 }
 
-/* Media Queries para responsividad */
+/* Footer Styles */
+.footer {
+  background-color: #ffffff;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
   .loguin-content {
     flex-direction: column;
-    align-items: center;
-  }
-
-  .form-box {
-    margin-right: 0;
-    margin-bottom: 20px;
-  }
-
-  .image-section-loguin {
-    display: none;
+    padding: 1rem;
   }
 
   .info-box {
-    flex-direction: column;
-    align-items: center;
+    grid-template-columns: 1fr;
   }
 
-  .info-item {
-    width: auto;
-  }
-}
-
-@media (max-width: 480px) {
-  .navbar-loguin a {
-    font-size: 16px;
-  }
-
-  .btn-submit {
-    font-size: 16px;
-  }
-
-  .input-field {
-    font-size: 14px;
-  }
-
-  .logo-image {
-    height: 200px;
-  }
-
-  .logo-description {
-    font-size: 12px;
+  .form-box {
+    margin: 1rem auto;
+    padding: 1.5rem;
   }
 }

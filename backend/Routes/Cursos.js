@@ -220,6 +220,75 @@ router.get('/filtrado', async (req, res) => {
 });
 
 
+// Nueva ruta para guardar el progreso
+router.post('/progreso', async (req, res) => {
+    try {
+        const { usuario_id, curso_id, leccion_id } = req.body;
 
+        if (!usuario_id || !curso_id || !leccion_id) {
+            return res.status(400).json({ message: 'Faltan parámetros requeridos' });
+        }
+
+        await cursoService.guardarProgresoLeccion(usuario_id, curso_id, leccion_id);
+        res.json({ message: 'Progreso guardado exitosamente' });
+    } catch (error) {
+        console.error('Error al guardar progreso:', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+});
+
+// Nueva ruta para obtener el progreso
+router.get('/progreso/:usuario_id/:curso_id', async (req, res) => {
+    try {
+        const { usuario_id, curso_id } = req.params;
+        const progreso = await cursoService.obtenerProgresoCurso(usuario_id, curso_id);
+        res.json({ message: 'Progreso obtenido exitosamente', data: progreso });
+    } catch (error) {
+        console.error('Error al obtener progreso:', error);
+        res.status(500).json({ message: 'Error en el servidor' });
+    }
+});
+
+
+// Ruta para crear/actualizar calificación
+router.post('/:cursoId/calificaciones', async (req, res) => {
+    try {
+        const { cursoId } = req.params;
+        const { usuario_id, calificacion, comentario } = req.body;
+
+        // Validaciones de entrada
+        if (!usuario_id || !cursoId || calificacion === undefined) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'Faltan datos requeridos: usuario_id, cursoId y calificación son obligatorios' 
+            });
+        }
+
+        // Convertir a número y validar calificación
+        const calificacionNum = parseFloat(calificacion);
+        if (isNaN(calificacionNum) || calificacionNum < 1 || calificacionNum > 5) {
+            return res.status(400).json({ 
+                success: false,
+                message: 'La calificación debe ser un número entre 1 y 5' 
+            });
+        }
+
+        // Usar el servicio para guardar la calificación
+        const resultado = await cursoService.guardarCalificacion(usuario_id, cursoId, calificacionNum, comentario);
+        
+        res.status(201).json({
+            success: true,
+            message: 'Calificación guardada exitosamente',
+            data: resultado
+        });
+    } catch (error) {
+        console.error('Error al procesar la calificación:', error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Error interno del servidor',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+});
 
 module.exports = router;

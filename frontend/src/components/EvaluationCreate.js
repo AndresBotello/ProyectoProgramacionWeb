@@ -96,6 +96,11 @@ const EvaluationCreate = () => {
     }
   };
 
+  const deletePregunta = (index) => {
+    const nuevasPreguntas = preguntas.filter((_, i) => i !== index);
+    setPreguntas(nuevasPreguntas);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsUploading(true);
@@ -292,6 +297,13 @@ const EvaluationCreate = () => {
           <div key={index} className="pregunta-container">
             <div>
               <label>Pregunta {index + 1}</label>
+              <button 
+              type="button"
+              onClick={() => deletePregunta(index)}
+              className="delete-button"
+            >
+              Eliminar
+            </button>
               <input 
                 type="text" 
                 name="pregunta" 
@@ -367,18 +379,7 @@ const EvaluationCreate = () => {
               </div>
             )}
 
-            {(pregunta.tipo === 'Ensayo' || pregunta.tipo === 'Actividad práctica') && (
-              <div>
-                <label>Instrucciones</label>
-                <textarea
-                  name="respuestaTexto"
-                  value={pregunta.respuestaTexto}
-                  onChange={(e) => handlePreguntaChange(index, e)}
-                  placeholder="Escriba las instrucciones para esta pregunta"
-                  required
-                />
-              </div>
-            )}
+            
           </div>
         ))}
 
