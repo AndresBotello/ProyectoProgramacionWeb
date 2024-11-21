@@ -204,12 +204,12 @@ const UserAccessForm = () => {
     <div className="user-profile-container">
       <div className="profile-banner">
         <div className="header-left">
-          <h1>Bienvenido a MaraLeSte</h1>
-          <p className="banner-subtitle">Tu plataforma de cursos de arte</p>
+          <h1>Welcome to MaraLeSte</h1>
+          <p className="banner-subtitle">Your art course platform</p>
         </div>
         <div className="header-right">
           <NotificationCenter />
-          <button className="btn-logout" onClick={handleLogout}>Cerrar Sesión</button>
+          <button className="btn-logout" onClick={handleLogout}>Log out</button>
         </div>
       </div>
 
@@ -220,17 +220,17 @@ const UserAccessForm = () => {
         <div className="profile-info">
           <h2>{nombreUsuario}</h2>
           <p>{emailUsuario}</p>
-          <p>¡Sigue aprendiendo con tus cursos!</p>
-          <button className="btn-edit-profile" onClick={handleEditProfile}>Editar Perfil</button>
-          <button className="btn-mensajeria" onClick={() => setMostrarMensajeria(!mostrarMensajeria)}>Ir a Mensajería</button>
+          <p>Keep learning with our courses!</p>
+          <button className="btn-edit-profile" onClick={handleEditProfile}>Edit Profile</button>
+          <button className="btn-mensajeria" onClick={() => setMostrarMensajeria(!mostrarMensajeria)}>Go to Messaging</button>
         </div>
       </div>
 
       {isEditing && (
         <form onSubmit={handleSaveProfile} className="edit-profile-form">
-          <h3>Editar Perfil</h3>
+          <h3>Edit Profile</h3>
           <div>
-            <label>Nombre:</label>
+            <label>Name:</label>
             <input
               type="text"
               value={newNombre}
@@ -238,7 +238,7 @@ const UserAccessForm = () => {
             />
           </div>
           <div>
-            <label>Correo:</label>
+            <label>Email:</label>
             <input
               type="email"
               value={newCorreo}
@@ -246,33 +246,30 @@ const UserAccessForm = () => {
             />
           </div>
           <div>
-            <label>Imagen de Perfil:</label>
+            <label>Profile Picture:</label>
             <input
               type="file"
               onChange={handleImageChange}
             />
           </div>
-          <button type="submit">Guardar Cambios</button>
-          <button type="button" onClick={() => setIsEditing(false)}>Cancelar</button>
+          <button type="submit">Save Changes</button>
+          <button type="button" onClick={() => setIsEditing(false)}>Cancel</button>
         </form>
       )}
         {mostrarMensajeria && <Mensajeria />}
         
-      <h2 className="filtro">Buscar cursos disponibles</h2>
+      <h2 className="filtro">Search available courses</h2>
       <div className="search-bar">
         <input
           type="text"
-          placeholder="Buscar cursos..."
+          placeholder="Search courses..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
-
-     
-
-                <h2>Cursos Disponibles</h2>
+        <h2>Available Courses</h2>
           {isLoading ? (
-            <p>Cargando cursos...</p>
+            <p>Loading Courses...</p>
           ) : error ? (
             <p>{error}</p>
           ) : cursos.length > 0 ? (
@@ -294,21 +291,21 @@ const UserAccessForm = () => {
                     >
                       <h3>{curso.titulo}</h3>
                       <p>{curso.descripcion}</p>
-                      <p>Categoría: {curso.categoria}</p>
-                      <p>Nivel: {curso.nivel}</p>
-                      <p>Precio: ${curso.precio}</p>
+                      <p>Category: {curso.categoria}</p>
+                      <p>Level: {curso.nivel}</p>
+                      <p>Price: ${curso.precio}</p>
                       <button onClick={(e) => {
-                        e.stopPropagation(); // Evita que el evento se propague al `onClick` del contenedor.
+                        e.stopPropagation(); 
                         handleInscripcion(curso.id);
                       }}>
-                        Inscribirse
+                        Inscribirme
                       </button>
                     </div>
                   );
                 })}
             </div>
           ) : (
-            <p>No hay cursos disponibles.</p>
+            <p>There are no courses available.</p>
           )}
       <Footer />
     </div>

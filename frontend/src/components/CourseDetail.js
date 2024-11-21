@@ -451,10 +451,10 @@ const CourseDetail = () => {
           className="absolute top-4 right-4 p-1 hover:bg-gray-100 rounded-full"
           aria-label="Cerrar modal"
         >
-          <X size={24} />
+          <X size={18} />
         </button>
 
-        <h3 className="text-xl font-semibold mb-4">¡Felicitaciones por completar el curso!</h3>
+        <h3 className="text-xl font-semibold mb-4">Congratulations on completing the course!</h3>
         
         {/* Sección de Certificado */}
         <div className="mb-6">
@@ -471,7 +471,7 @@ const CourseDetail = () => {
             </div>
           ) : certificateUrl ? (
             <div className="text-center">
-              <p className="text-green-600 mb-2">¡Tu certificado está listo!</p>
+              <p className="text-green-600 mb-2">Your certificate is ready!</p>
               <a
                 href={certificateUrl}
                 download
@@ -479,12 +479,12 @@ const CourseDetail = () => {
                 rel="noopener noreferrer"
                 className="inline-block px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
               >
-                Descargar Certificado
+                Download Certificate
               </a>
             </div>
           ) : (
             <div className="text-center">
-              <p>Generando tu certificado...</p>
+              <p>Generating your certificate...</p>
               <div className="loading-spinner"></div>
             </div>
           )}
@@ -492,7 +492,7 @@ const CourseDetail = () => {
 
         {/* Sección de Calificación */}
         <div className="rating-section">
-          <h4 className="text-lg font-medium mb-2">Califica tu experiencia con el curso</h4>
+          <h4 className="text-lg font-medium mb-2">Rate your experience with the course</h4>
           
           {successMessage && (
             <div className="mb-4 p-2 bg-green-100 text-green-700 rounded">
@@ -534,14 +534,14 @@ const CourseDetail = () => {
               className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-md"
               disabled={isSubmittingRating}
             >
-              Cerrar
+              Close
             </button>
             <button 
               onClick={handleSubmitRating}
               disabled={isSubmittingRating || rating === 0}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md disabled:bg-gray-400"
             >
-              {isSubmittingRating ? 'Enviando...' : 'Enviar Calificación'}
+              {isSubmittingRating ? 'Sending...' : 'Submit rating'}
             </button>
           </div>
         </div>
@@ -551,8 +551,8 @@ const CourseDetail = () => {
   return (
     <div className="course-detail-layout">
       <aside className="course-sidebar">
-        <h2>Esquema del curso</h2>
-        <input type="text" placeholder="Buscar esquema del curso" />
+        <h2>Course outline</h2>
+        <input type="text" placeholder="Search course outline" />
         <ul>
           {lecciones.map((leccion) => (
             <li key={leccion.id} className={completedLessons.includes(leccion.id) ? 'completed' : ''}>
@@ -566,7 +566,7 @@ const CourseDetail = () => {
 
       <main className="course-content">
         {isLoading ? (
-          <p>Cargando curso...</p>
+          <p>Loading course...</p>
         ) : error ? (
           <p className="error-message">{error}</p>
         ) : curso ? (
@@ -579,7 +579,7 @@ const CourseDetail = () => {
             </div>
 
             <section className="progress-section">
-              <h3>Progreso del curso</h3>
+              <h3>Course progress</h3>
               <div className="progress-bar">
                 <div className="progress" style={{ width: `${calculateProgress()}%` }}></div>
               </div>
@@ -603,7 +603,7 @@ const CourseDetail = () => {
                         <div className="media-container">
                           <video controls className="media-item">
                             <source src={leccion.video_url} type="video/mp4" />
-                            Tu navegador no soporta el video.
+                            Your browser does not support video.
                           </video>
                         </div>
                       )}
@@ -617,31 +617,31 @@ const CourseDetail = () => {
                   ))}
                 </ul>
               ) : (
-                <p>No hay lecciones disponibles para este curso.</p>
+                <p>There are no lessons available for this course.</p>
               )}
             </section>
 
             {evaluacion && (
               <section className="course-evaluation">
-                <h2>Evaluación del Curso</h2>
+                <h2>Course Evaluation</h2>
                 {!isFullyCompleted() ? (
                   <div className="evaluation-locked">
                     <p className="evaluation-notice">
-                      Para acceder a la evaluación, debes completar el 100% del curso.
-                      Progreso actual: {Math.round(calculateProgress())}%
+                      To access the evaluation, you must complete 100% of the course.
+                      Current progress: {Math.round(calculateProgress())}%
                     </p>
                   </div>
                 ) : !evaluacionDisponible ? (
                   <div className="evaluation-results">
-                    <h3>Evaluación ya presentada</h3>
+                    <h3>Evaluation already submitted</h3>
                     {score && (
                       <p>
-                        Puntaje obtenido: {score.score.toFixed(1)}%
-                        ({score.correctAnswers} de {score.totalQuestions} correctas)
+                        Score obtained: {score.score.toFixed(1)}%
+                        ({score.correctAnswers} de {score.totalQuestions} corrects)
                       </p>
                     )}
                     <p className="evaluation-notice">
-                      Esta evaluación ya ha sido completada y no puede presentarse nuevamente.
+                     This evaluation has already been completed and cannot be submitted again.
                     </p>
                   </div>
                 ) : (
@@ -673,7 +673,7 @@ const CourseDetail = () => {
                         disabled={isSubmitting || !validateAnswers() || evaluationSubmitted}
                         className="submit-button"
                       >
-                        {isSubmitting ? 'Enviando...' : 'Enviar evaluación'}
+                        {isSubmitting ? 'Sending...' : 'Send evaluation'}
                       </button>
                     </div>
                   </div>
@@ -683,8 +683,8 @@ const CourseDetail = () => {
 
             {evaluacion && evaluationSubmitted && score && score.score >= 70 && (
               <section className="course-completion">
-                <h3>¡Felicitaciones! Has aprobado el curso</h3>
-                {/* Replace the existing button with the new code */}
+                <h3>Congratulations! You have passed the course</h3>
+                
                 {!showRatingModal && (
                   <button 
                     onClick={() => {
@@ -693,7 +693,7 @@ const CourseDetail = () => {
                     }} 
                     className="certificate-button"
                   >
-                    Obtener Certificado
+                    Get Certificate
                   </button>
                 )}
               </section>
@@ -702,7 +702,7 @@ const CourseDetail = () => {
             {showRatingModal && <RatingModal />}
           </>
         ) : (
-          <p>No se pudo cargar la información del curso.</p>
+          <p>Course information could not be loaded.</p>
         )}
       </main>
     </div>

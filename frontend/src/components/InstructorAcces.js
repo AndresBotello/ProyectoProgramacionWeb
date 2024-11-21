@@ -95,11 +95,11 @@ const InstructorAccess = () => {
     <div className="user-profile-container">
       <div className="profile-banner">
         <div className="header-left">
-          <h1>Bienvenido a MaraLeSte</h1>
-          <p className="banner-subtitle">Tu plataforma de cursos de arte</p>
+          <h1>Welcome to MaraLeSte</h1>
+          <p className="banner-subtitle">Your art course platform</p>
         </div>
         <div className="header-right">
-          <button className="btn-logout" onClick={handleLogout}>Cerrar Sesión</button>
+          <button className="btn-logout" onClick={handleLogout}>Log Out</button>
         </div>
       </div>
 
@@ -110,17 +110,17 @@ const InstructorAccess = () => {
         <div className="profile-info">
           <h2>{nombreUsuario}</h2>
           <p>{emailUsuario}</p>
-          <p>¡Sigue aprendiendo con tus cursos!</p>
-          <button className="btn-edit-profile" onClick={handleEditProfile}>Editar Perfil</button>
-          <button className="btn-mensajeria" onClick={() => setMostrarMensajeria(!mostrarMensajeria)}>Ir a Mensajería</button>
+          <p>Keep learning with our courses!</p>
+          <button className="btn-edit-profile" onClick={handleEditProfile}>Edit Profile</button>
+          <button className="btn-mensajeria" onClick={() => setMostrarMensajeria(!mostrarMensajeria)}>Go to Messaging</button>
         </div>
       </div>
 
       {isEditing && (
         <form onSubmit={handleSaveProfile} className="edit-profile-form">
-          <h3>Editar Perfil</h3>
+          <h3>Edit Profile</h3>
           <div>
-            <label>Nombre:</label>
+            <label>Name:</label>
             <input
               type="text"
               value={newNombre}
@@ -128,7 +128,7 @@ const InstructorAccess = () => {
             />
           </div>
           <div>
-            <label>Correo:</label>
+            <label>Email:</label>
             <input
               type="email"
               value={newCorreo}
@@ -136,23 +136,22 @@ const InstructorAccess = () => {
             />
           </div>
           <div>
-            <label>Imagen de Perfil:</label>
+            <label>Profile Picture:</label>
             <input
               type="file"
               onChange={handleImageChange}
             />
           </div>
-          <button type="submit">Guardar Cambios</button>
-          <button type="button" onClick={() => setIsEditing(false)}>Cancelar</button>
+          <button type="submit">Save Changes</button>
+          <button type="button" onClick={() => setIsEditing(false)}>Cancel</button>
         </form>
       )}
 
       {mostrarMensajeria && <Mensajeria />}
 
       <aside className="buttons-container">
-        <button className="btn btn-info" onClick={() => navigate('/lista-cursos')}>Lista de Cursos</button>
-        <button className="btn btn-warning" onClick={() => navigate('/usuarios-listinst')}>Lista de Usuarios</button>
-        <button className="btn btn-evaluaciones" onClick={() => navigate('/crear-evaluaciones')}>Crear Evaluaciones</button>
+        <button className="btn btn-info" onClick={() => navigate('/lista-cursos')}>Course List</button>
+        <button className="btn btn-warning" onClick={() => navigate('/usuarios-listinst')}>User List</button>
       </aside>
 
       <Footer />

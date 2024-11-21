@@ -176,33 +176,33 @@ const CourseCreate = () => {
 
   return (
     <div className="course-create-container">
-      <h1>Crear Nuevo Curso</h1>
+      <h1>Create New Course</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Título del Curso</label>
+          <label>Course Title</label>
           <input type="text" name="titulo" value={curso.titulo} onChange={handleChange} required />
         </div>
         <div>
-          <label>Descripción</label>
+          <label>Description</label>
           <textarea name="descripcion" value={curso.descripcion} onChange={handleChange} required />
         </div>
         <div>
-          <label>Contenido Extendido</label>
+          <label>Extended Content</label>
           <textarea name="contenido" value={curso.contenido} onChange={handleChange} required />
         </div>
         <div>
-          <label>Categoría</label>
+          <label>Category</label>
           <select name="categoria_id" value={curso.categoria_id} onChange={handleChange} required>
-            <option value="">Seleccionar categoría</option>
+            <option value="">Select a category</option>
             {categorias.map((categoria) => (
               <option key={categoria.id} value={categoria.id}>{categoria.nombre}</option>
             ))}
           </select>
         </div>
         <div>
-          <label>Nivel</label>
+          <label>Level</label>
           <select name="nivel_id" value={curso.nivel_id} onChange={handleChange} required>
-            <option value="">Seleccionar nivel</option>
+            <option value="">Select a level</option>
             {niveles.map((nivel) => (
               <option key={nivel.id} value={nivel.id}>{nivel.nivel}</option>
             ))}
@@ -211,14 +211,14 @@ const CourseCreate = () => {
         <div>
           <label>Instructor</label>
           <select name="instructor_id" value={curso.instructor_id} onChange={handleChange} required>
-            <option value="">Seleccionar instructor</option>
+            <option value="">Select an instructor</option>
             {instructores.map((instructor) => (
               <option key={instructor.id} value={instructor.id}>{instructor.nombre}</option>
             ))}
           </select>
         </div>
         <div>
-          <label>Precio</label>
+          <label>Price</label>
           <input type="number" name="precio" value={curso.precio} onChange={handleChange} required />
         </div>
         <div>
@@ -231,29 +231,29 @@ const CourseCreate = () => {
           />
         </div>
         <div>
-          <label>Idioma</label>
+          <label>Language</label>
           <select name="idioma" value={curso.idioma} onChange={handleChange}>
-            <option value="ES">Español</option>
-            <option value="EN">Inglés</option>
+            <option value="ES">Spanish</option>
+            <option value="EN">English</option>
           </select>
         </div>
-
+  
         <div>
-          <h3>Lecciones</h3>
+          <h3>Lessons</h3>
           {lecciones.map((leccion, index) => (
             <div key={index} className="leccion-container">
               <div className="leccion-header">
-                <h4>Lección {index + 1}</h4>
+                <h4>Lesson {index + 1}</h4>
                 <button 
                   type="button"
                   onClick={() => deleteLeccion(index)}
                   className="delete-button"
                 >
-                  Eliminar
+                  Delete
                 </button>
               </div>
               <div>
-                <label>Título</label>
+                <label>Title</label>
                 <input 
                   type="text" 
                   name="titulo" 
@@ -263,7 +263,7 @@ const CourseCreate = () => {
                 />
               </div>
               <div>
-                <label>Contenido</label>
+                <label>Content</label>
                 <textarea 
                   name="contenido" 
                   value={leccion.contenido} 
@@ -280,7 +280,7 @@ const CourseCreate = () => {
                 />
               </div>
               <div>
-                <label>Imagen</label>
+                <label>Image</label>
                 <input 
                   type="file" 
                   accept="image/*" 
@@ -290,17 +290,17 @@ const CourseCreate = () => {
             </div>
           ))}
           <button type="button" onClick={addLeccion} className="add-button">
-            Añadir Lección
+            Add Lesson
           </button>
         </div>
-
+  
         <div className="submit-container">
           <button type="submit" disabled={isUploading} className="submit-button">
-            {isUploading ? 'Creando curso...' : 'Crear Curso'}
+            {isUploading ? 'Creating course...' : 'Create Course'}
           </button>
         </div>
       </form>
-
+  
       {mensajeExito && (
         <div className={mensajeExito.includes('Error') ? 'error-message' : 'success-message'}>
           {mensajeExito}
@@ -308,6 +308,6 @@ const CourseCreate = () => {
       )}
     </div>
   );
+  
 };
-
 export default CourseCreate;

@@ -80,7 +80,7 @@ const Mensajeria = () => {
   useEffect(() => {
     if (destinatarioId) {
       cargarConversacion();
-      const interval = setInterval(cargarConversacion, 30000); // Cada 30 segundos
+      const interval = setInterval(cargarConversacion, 30000); 
       return () => clearInterval(interval);
     }
   }, [destinatarioId]);
@@ -121,7 +121,7 @@ const Mensajeria = () => {
           onChange={(e) => setDestinatarioId(e.target.value)}
           className="destinatario-select"
         >
-          <option value="">Seleccionar destinatario</option>
+          <option value="">Select recipient</option>
           {usuarios.map((usuario) => (
             <option key={usuario.id} value={usuario.id}>
               {usuario.nombre}
@@ -135,7 +135,7 @@ const Mensajeria = () => {
               {isLoading ? (
                 <div className="loading-state">
                   <div className="loading-spinner"></div>
-                  <p>Cargando conversación...</p>
+                  <p>Loading conversation...</p>
                 </div>
               ) : error ? (
                 <div className="error-state">
@@ -160,7 +160,7 @@ const Mensajeria = () => {
                 ))
               ) : (
                 <div className="empty-state">
-                  <p>No hay mensajes en esta conversación</p>
+                  <p>There are no messages in this conversation</p>
                 </div>
               )}
             </div>
@@ -175,7 +175,7 @@ const Mensajeria = () => {
               />
               <button type="submit" className="enviar-button">
                 <Send className="enviar-icon" />
-                Enviar
+                Send
               </button>
             </form>
           </div>

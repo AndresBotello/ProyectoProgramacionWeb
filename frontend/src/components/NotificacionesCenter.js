@@ -138,7 +138,7 @@ const NotificacionesCenter = () => {
             <div className="notification-header">
               <div className="header-content">
                 <Bell className="header-icon" />
-                <h2 className="header-title">Notificaciones</h2>
+                <h2 className="header-title">Notifications</h2>
                 {unreadCount > 0 && (
                   <span className="unread-badge">
                     {unreadCount} nueva{unreadCount !== 1 ? 's' : ''}
@@ -157,7 +157,7 @@ const NotificacionesCenter = () => {
               {isLoading ? (
                 <div className="loading-state">
                   <div className="loading-spinner"></div>
-                  <p>Cargando notificaciones...</p>
+                  <p>Loading notifications...</p>
                 </div>
               ) : error ? (
                 <div className="error-state">
@@ -180,11 +180,11 @@ const NotificacionesCenter = () => {
                         <div className="notification-text">
                           <div className="notification-header-row">
                             <span className="notification-title">
-                              {notification.tipo === 'nuevo_curso' ? 'Nuevo Curso Disponible' : 'Notificación'}
+                              {notification.tipo === 'nuevo_curso' ? 'New Course Available' : 'Notification'}
                             </span>
                             {!notification.leida && (
                               <span className="new-badge">
-                                Nueva
+                                New
                               </span>
                             )}
                           </div>
@@ -199,7 +199,7 @@ const NotificacionesCenter = () => {
                           <button
                             onClick={(e) => markAsRead(notification.id, e)}
                             className="mark-read-button"
-                            title="Marcar como leída"
+                            title="Mark as read"
                           >
                             <Check className="check-icon" />
                           </button>
@@ -211,8 +211,8 @@ const NotificacionesCenter = () => {
               ) : (
                 <div className="empty-state">
                   <Bell className="empty-icon" />
-                  <p className="empty-title">No hay notificaciones</p>
-                  <p className="empty-subtitle">Las notificaciones aparecerán aquí</p>
+                  <p className="empty-title">No notifications</p>
+                  <p className="empty-subtitle">Notifications will appear here</p>
                 </div>
               )}
             </div>

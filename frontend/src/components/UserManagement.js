@@ -75,9 +75,9 @@ const UserManagement = () => {
 
     return (
         <div className="user-management-container">
-            <h1>Gestión de Usuarios</h1>
+            <h1>User Management</h1>
             {loading ? (
-                <p>Cargando usuarios...</p>
+                <p>Loading Users...</p>
             ) : error ? (
                 <p>{error}</p>
             ) : (
@@ -85,10 +85,10 @@ const UserManagement = () => {
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Correo</th>
+                            <th>Name</th>
+                            <th>Email</th>
                             <th>Rol</th>
-                            <th>Acciones</th>
+                            <th>Accions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -115,7 +115,7 @@ const UserManagement = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="5">No hay usuarios disponibles</td>
+                                <td colSpan="5">No users available</td>
                             </tr>
                         )}
                     </tbody>

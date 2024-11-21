@@ -44,21 +44,21 @@ const UsuariosListIns = () => {
 
   return (
     <div className="usuarios-list">
-      <h2>Reporte de Puntos por Estudiante</h2>
-
+      <h2>Student Points Report</h2>
+  
       {loading ? (
-        <div>Cargando datos...</div>
+        <div>Loading data...</div>
       ) : error ? (
         <div className="error">{error}</div>
       ) : puntos.length > 0 ? (
         <table>
           <thead>
             <tr>
-              <th>Estudiante</th>
-              <th>Curso</th>
-              <th>Fecha de Inscripción</th>
-              <th>Puntos Obtenidos</th>
-              <th>Calificacion Total</th>
+              <th>Student</th>
+              <th>Course</th>
+              <th>Enrollment Date</th>
+              <th>Points Earned</th>
+              <th>Total Grade</th>
             </tr>
           </thead>
           <tbody>
@@ -74,10 +74,10 @@ const UsuariosListIns = () => {
           </tbody>
         </table>
       ) : (
-        <div>No se encontraron registros.</div>
+        <div>No records found.</div>
       )}
     </div>
   );
-};
+};  
 
 export default UsuariosListIns;

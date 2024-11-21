@@ -260,7 +260,42 @@
   cursor: not-allowed;
 }
 
-/* Rating Modal Styles */
+.rating-modal .rating-content {
+  max-width: 800px; /* Reduced width */
+  padding: 2.5rem; /* Slightly reduced padding */
+}
+
+.rating-modal h3 {
+  font-size: 1rem; /* Smaller title */
+  margin-bottom: o.75rem; /* Reduced margin */
+  text-align: center;
+}
+
+.rating-section h4 {
+  font-size: 1rem; /* Smaller section header */
+  margin-bottom: 0.75rem; /* Reduced margin */
+  text-align: center;
+}
+
+.stars-container {
+  gap: 0.5rem; /* Tighter star spacing */
+  margin: 0.70rem 0; /* Reduced margin */
+}
+
+.star-button {
+  font-size: 1.2rem; /* Smaller star size */
+}
+
+textarea {
+  min-height: 60px; /* Reduced text area height */
+  margin-bottom: 0.5rem; /* Reduced bottom margin */
+}
+
+.rating-section .flex {
+  gap: 0.5rem; 
+}
+
+
 .rating-modal {
   position: fixed;
   top: 0;
@@ -276,20 +311,10 @@
 
 .rating-content {
   background-color: white;
-  padding: 2rem;
   border-radius: 8px;
   width: 90%;
-  max-width: 500px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;
-}
-
-.certificate-section {
-  margin: 1.5rem 0;
-  padding: 1.5rem;
-  background-color: #f8fafc;
-  border-radius: 8px;
-  text-align: center;
 }
 
 .certificate-download-button {

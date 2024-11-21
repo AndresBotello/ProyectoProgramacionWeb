@@ -31,7 +31,7 @@ const Loguin = ({ onLogin }) => {
   const [successMessage, setSuccessMessage] = useState(null); 
   const navigate = useNavigate();
 
-  // Función de validación de contraseña reutilizable
+
   const validatePassword = (password) => {
     if (!password || password.length < 6) {
       return "La contraseña debe tener al menos 6 caracteres.";
@@ -176,21 +176,21 @@ const Loguin = ({ onLogin }) => {
     <div className="loguin-container">
       <header className="navbar-loguin">
         <a href="/">Inicio</a>
-        <a href="/contacto">Contacto</a>
+        <a href="/contacto">Contact</a>
       </header>
 
       <div className="loguin-content">
         <div className="form-box">
           {!isRecovering && !isVerifying && (
             <>
-              <h2>{registrando ? "Regístrate" : "Inicia Sesión"}</h2>
+              <h2>{registrando ? "Regíster" : "Sig in"}</h2>
               {error && <p className="error-message">{error}</p>}
               {successMessage && <p className="success-message">{successMessage}</p>}
               <form onSubmit={functAutenticacion}>
                 {registrando && (
                   <input 
                     type="text" 
-                    placeholder="Nombre" 
+                    placeholder="Name" 
                     className="input-field" 
                     value={nombre} 
                     onChange={(e) => setNombre(e.target.value)} 
@@ -199,7 +199,7 @@ const Loguin = ({ onLogin }) => {
                 )}
                 <input 
                   type="email" 
-                  placeholder="Correo electrónico" 
+                  placeholder="Email" 
                   className="input-field" 
                   value={email} 
                   onChange={(e) => setEmail(e.target.value)} 
@@ -208,7 +208,7 @@ const Loguin = ({ onLogin }) => {
                 <div className="password-field">
                   <input 
                     type={showPassword ? 'text' : 'password'} 
-                    placeholder="Contraseña" 
+                    placeholder="Password" 
                     className="input-field" 
                     value={password} 
                     onChange={(e) => setPassword(e.target.value)} 
@@ -219,25 +219,25 @@ const Loguin = ({ onLogin }) => {
                     onClick={() => setShowPassword(!showPassword)}
                     style={{ cursor: 'pointer' }}
                   >
-                    {showPassword ? "Ocultar" : "Mostrar"}
+                    {showPassword ? "Hide" : "Display"}
                   </span>
                 </div>
                 <button className="btn-submit" disabled={loading}>
-                  {loading ? "Cargando..." : (registrando ? "Regístrate" : "Inicia Sesión")}
+                  {loading ? "Loading..." : (registrando ? "Register": "Sig in")}
                 </button>
               </form>
               <button className="btn-toggle" onClick={() => setRegistrando(!registrando)}>
-                {registrando ? "¿Ya tienes una cuenta? Inicia sesión" : "¿No tienes cuenta? Regístrate"}
+                {registrando ? "Do you already have an account? Log in": "Don't have an account? Sign up"}
               </button>
               <button className="btn-toggle" onClick={() => setIsRecovering(true)}>
-                ¿Olvidaste tu contraseña?
+               Forgot your password?
               </button>
             </>
           )}
 
           {isRecovering && !isVerifying && (
             <>
-              <h2>Recuperar Contraseña</h2>
+              <h2>Recover Password</h2>
               {error && <p className="error-message">{error}</p>}
               {successMessage && <p className="success-message">{successMessage}</p>}
               <input 
@@ -249,17 +249,17 @@ const Loguin = ({ onLogin }) => {
                 required 
               />
               <button onClick={handlePasswordRecovery} className="btn-submit">
-                Enviar Código de Recuperación
+               Send Recovery Code
               </button>
               <button className="btn-toggle" onClick={() => setIsRecovering(false)}>
-                Regresar
+               Go back
               </button>
             </>
           )}
 
           {isVerifying && registrando && (
             <>
-              <h2>Verificar Correo Electrónico</h2>
+              <h2>Verify Email</h2>
               {error && <p className="error-message">{error}</p>}
               {successMessage && <p className="success-message">{successMessage}</p>}
               <input 
@@ -271,14 +271,14 @@ const Loguin = ({ onLogin }) => {
                 required 
               />
               <button onClick={handleVerifyEmail} className="btn-submit">
-                Verificar Correo
+               Verify Email
               </button>
             </>
           )}
 
           {isVerifying && isRecovering && (
             <>
-              <h2>Verificar Código y Restablecer Contraseña</h2>
+              <h2>Verify Code and Reset Password</h2>
               {error && <p className="error-message">{error}</p>}
               {successMessage && <p className="success-message">{successMessage}</p>}
               <input 
@@ -307,13 +307,13 @@ const Loguin = ({ onLogin }) => {
                 </span>
               </div>
               <p className="password-requirements">
-                La contraseña debe tener al menos 6 caracteres, una letra mayúscula, un número y un carácter especial.
+               The password must be at least 6 characters, one uppercase letter, one number, and one special character.
               </p>
               <button onClick={handleVerifyCodeAndResetPassword} className="btn-submit">
-                Restablecer Contraseña
+               Reset Password
               </button>
               <button className="btn-toggle" onClick={() => { setIsVerifying(false); setIsRecovering(false); }}>
-                Regresar
+               Go back
               </button>
             </>
           )}
@@ -321,10 +321,10 @@ const Loguin = ({ onLogin }) => {
 
         <div className="centered-container">
           <div className="info-box">
-            <InfoBox imageSrc={imagen3} description="VISTA DE MONTAJE EN LUGAR EXPOSITIVO 2022" />
-            <InfoBox imageSrc={imagen5} description="METAFORIZACION SOBRE LA VIDA" />
-            <InfoBox imageSrc={imagen4} description="RELACIÓN VITAL ESCULTURA" />
-            <InfoBox imageSrc={imagen6} description="SUSURRO DEL DIOS CRONOS" />
+            <InfoBox imageSrc={imagen3} description="ASSEMBLY VIEW IN EXHIBITION PLACE 2022" />
+            <InfoBox imageSrc={imagen5} description="METAPHORIZATION ABOUT LIFE" />
+            <InfoBox imageSrc={imagen4} description="VITAL RELATIONSHIP SCULPTURE" />
+            <InfoBox imageSrc={imagen6} description="WHISPER OF THE GOD CRONOS" />
           </div>
         </div>
 

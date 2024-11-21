@@ -45,85 +45,93 @@ const Inicio = () => {
     navigate('/login');
   };
 
-  return (
-    <div className="app">
-      {/* Navbar */}
-      <nav className="navbar" aria-label="Main navigation">
-        <div className="container">
-          <Link to="/" aria-label="Homepage">
-            <img src={logo} alt="Logo" className="logo" />
-          </Link>
-          <ul className="nav-links">
-            <li><a href="#courses">Cursos</a></li>
-            <li><a href="#about">Nosotros</a></li>
-            <li><a href="#contact">Contacto</a></li>
-          </ul>
-          <Link to="/login">
-            <button className="btn-primary">Iniciar Sesión</button>
-          </Link>
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <main>
-        {/* Hero Section */}
-        <section className="hero-section">
-          <div className="hero-content">
-            <h1>Aprende y Crece con Nosotros</h1>
-            <p>Conecta con una comunidad global de aprendices y profesionales.</p>
-          </div>
+  return ( 
+    <div className="app"> 
+      {/* Navbar */} 
+      <nav className="navbar" aria-label="Main Navigation"> 
+        <div className="container"> 
+          <Link to="/" aria-label="Homepage"> 
+            <img src={logo} alt="Logo" className="logo" /> 
+          </Link> 
+          <ul className="nav-links"> 
+            <li><a href="#courses">Courses</a></li> 
+            <li><a href="#about">About Us</a></li> 
+            <li><a href="#contact">Contact</a></li> 
+          </ul> 
+          <Link to="/login"> 
+            <button className="btn-primary">Sign In</button> 
+          </Link> 
+        </div> 
+      </nav> 
+  
+      {/* Main Content */} 
+      <main> 
+        {/* Hero Section */} 
+        <section className="hero-section"> 
+          <div className="hero-content"> 
+            <h1>Learn and Grow with Us</h1> 
+            <p>Connect with a global community of learners and professionals.</p> 
+          </div> 
         </section>
-
-        {/* Courses Section */}
-        <section id="courses" className="courses-section">
-          <div className="container">
-            <h2>Nuestros Cursos</h2>
-            <div className="course-list">
-              {isLoading ? (
-                <p>Cargando cursos...</p>
-              ) : error ? (
-                <p>{error}</p>
-              ) : cursos.length > 0 ? (
-                cursos.map(curso => (
+  
+        {/* Courses Section */} 
+        <section id="courses" className="courses-section"> 
+          <div className="container"> 
+            <h2>Our Courses</h2> 
+            <div className="course-list"> 
+              {isLoading ? ( 
+                <p>Loading courses...</p> 
+              ) : error ? ( 
+                <p>{error}</p> 
+              ) : cursos.length > 0 ? ( 
+                cursos.map(curso => ( 
                   <CourseItem 
                     key={curso.id} 
                     title={curso.titulo} 
-                    description={curso.descripcion}
-                    onLoginClick={handleLoginRedirect}
-                  />
-                ))
-              ) : (
-                <p>No hay cursos disponibles.</p>
+                    description={curso.descripcion} 
+                    onLoginClick={handleLoginRedirect} 
+                  /> 
+                )) 
+              ) : ( 
+                <p>No courses available.</p> 
               )}
-            </div>
-          </div>
+            </div> 
+          </div> 
         </section>
-
-        {/* About Section */}
-        <section id="about" className="about-section">
-          <div className="container">
-            <h2>Sobre Nosotros</h2>
-            <p>Somos una plataforma de aprendizaje enfocada en brindar la mejor experiencia educativa para todos.</p>
-          </div>
+  
+        {/* About Section */} 
+        <section id="about" className="about-section"> 
+          <div className="container"> 
+            <h2>About Us</h2> 
+            <p>We are a learning platform focused on providing the best educational experience for everyone.</p> 
+          </div> 
         </section>
-
-        {/* Contact Section */}
-        <section id="contact" className="contact-section">
-          <div className="container">
-            <h2>Contáctanos</h2>
-            <form className="form" aria-label="Contact form">
-              <input type="text" placeholder="Nombre" className="input" aria-label="Nombre" />
-              <textarea placeholder="Mensaje" className="textarea" aria-label="Mensaje"></textarea>
-              <button type="submit" className="btn-primary">Enviar Mensaje</button>
-            </form>
-          </div>
-        </section>
-      </main>
-
-      {/* Footer */}
-      <Footer />
-    </div>
+  
+        {/* Contact Section */} 
+        <section id="contact" className="contact-section"> 
+          <div className="container"> 
+            <h2>Contact Us</h2> 
+            <form className="form" aria-label="Contact form"> 
+              <input 
+                type="text" 
+                placeholder="Name" 
+                className="input" 
+                aria-label="Name" 
+              /> 
+              <textarea 
+                placeholder="Message" 
+                className="textarea" 
+                aria-label="Message"
+              ></textarea> 
+              <button type="submit" className="btn-primary">Send Message</button> 
+            </form> 
+          </div> 
+        </section> 
+      </main> 
+  
+      {/* Footer */} 
+      <Footer /> 
+    </div> 
   );
 };
-
 export default Inicio;

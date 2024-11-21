@@ -223,10 +223,10 @@ const EvaluationCreate = () => {
 
   return (
     <div className="evaluation-create-container">
-      <h1>Crear Nueva Evaluación</h1>
+      <h1>Create New Assessment</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Título de la Evaluación</label>
+          <label>Evaluation Title</label>
           <input 
             type="text" 
             name="titulo" 
@@ -237,14 +237,14 @@ const EvaluationCreate = () => {
         </div>
 
         <div>
-          <label>Tipo de Evaluación</label>
+          <label>Evaluation Type</label>
           <select 
             name="tipo_evaluacion_id" 
             value={evaluacion.tipo_evaluacion_id} 
             onChange={handleChange}
             required
           >
-            <option value="">Seleccionar Tipo</option>
+            <option value="">Select Type</option>
             {tiposEvaluacion.map((tipo) => (
               <option key={tipo.id} value={tipo.id}>
                 {tipo.tipo}
@@ -254,14 +254,14 @@ const EvaluationCreate = () => {
         </div>
 
         <div>
-          <label>Curso</label>
+          <label>Course</label>
           <select 
             name="curso_id" 
             value={evaluacion.curso_id} 
             onChange={handleChange} 
             required
           >
-            <option value="">Seleccionar Curso</option>
+            <option value="">Select Course</option>
             {cursos.map((curso) => (
               <option key={curso.id} value={curso.id}>
                 {curso.titulo}
@@ -271,7 +271,7 @@ const EvaluationCreate = () => {
         </div>
 
         <div>
-          <label>Fecha de Inicio</label>
+          <label>Start Date</label>
           <input 
             type="date" 
             name="fecha_inicio" 
@@ -282,7 +282,7 @@ const EvaluationCreate = () => {
         </div>
 
         <div>
-          <label>Fecha de Fin</label>
+          <label>End Date</label>
           <input 
             type="date" 
             name="fecha_fin" 
@@ -292,17 +292,17 @@ const EvaluationCreate = () => {
           />
         </div>
 
-        <h2>Preguntas</h2>
+        <h2>Questions</h2>
         {preguntas.map((pregunta, index) => (
           <div key={index} className="pregunta-container">
             <div>
-              <label>Pregunta {index + 1}</label>
+              <label>Question {index + 1}</label>
               <button 
               type="button"
               onClick={() => deletePregunta(index)}
               className="delete-button"
             >
-              Eliminar
+              Delete
             </button>
               <input 
                 type="text" 
@@ -314,14 +314,14 @@ const EvaluationCreate = () => {
             </div>
 
             <div>
-              <label>Tipo de Pregunta</label>
+              <label>Question Type</label>
               <select 
                 name="tipo" 
                 value={pregunta.tipo} 
                 onChange={(e) => handlePreguntaChange(index, e)}
                 required
               >
-                <option value="">Seleccionar Tipo</option>
+                <option value="">Select Type</option>
                 {tiposPregunta.map((tipo) => (
                   <option key={tipo.id} value={tipo.tipo}>
                     {tipo.tipo}
@@ -333,7 +333,7 @@ const EvaluationCreate = () => {
             {pregunta.tipo === 'Opción múltiple' && (
               <>
                 <div>
-                  <label>Opciones de Respuesta</label>
+                  <label>Response Options</label>
                   {pregunta.opciones.map((opcion, i) => (
                     <div key={i}>
                       <input
@@ -347,14 +347,14 @@ const EvaluationCreate = () => {
                   ))}
                 </div>
                 <div>
-                  <label>Respuesta Correcta</label>
+                  <label>Correct Answer</label>
                   <select
                     name="respuestaCorrecta"
                     value={pregunta.respuestaCorrecta}
                     onChange={(e) => handlePreguntaChange(index, e)}
                     required
                   >
-                    <option value="">Seleccionar opción correcta</option>
+                    <option value="">Select correct option</option>
                     {pregunta.opciones.map((_, i) => (
                       <option key={i} value={i}>Opción {i + 1}</option>
                     ))}
@@ -365,16 +365,16 @@ const EvaluationCreate = () => {
 
             {pregunta.tipo === 'Verdadero/Falso' && (
               <div>
-                <label>Respuesta Correcta</label>
+                <label>Correct Answer</label>
                 <select
                   name="respuestaCorrecta"
                   value={pregunta.respuestaCorrecta}
                   onChange={(e) => handlePreguntaChange(index, e)}
                   required
                 >
-                  <option value="">Seleccionar respuesta</option>
-                  <option value="0">Falso</option>
-                  <option value="1">Verdadero</option>
+                  <option value="">Select answer</option>
+                  <option value="0">Fake</option>
+                  <option value="1">True</option>
                 </select>
               </div>
             )}
@@ -384,11 +384,11 @@ const EvaluationCreate = () => {
         ))}
 
         <button type="button" onClick={addPregunta} className="btn-secondary">
-          Agregar Pregunta
+         Add Question
         </button>
         
         <button type="submit" disabled={isUploading} className="btn-primary">
-          {isUploading ? 'Creando...' : 'Crear Evaluación'}
+          {isUploading ? 'Creating...' : 'Create Evaluation'}
         </button>
       </form>
 

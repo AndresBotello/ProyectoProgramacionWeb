@@ -4,23 +4,48 @@ import '../CourseList.css';
 
 const CourseList = () => {
   const [cursos, setCursos] = useState([]);
+  const [instructores, setInstructores] = useState({});
   const token = localStorage.getItem('token');
+  const tipoUsuario = localStorage.getItem('tipo_usuario_id'); // Obtener el tipo de usuario
 
   useEffect(() => {
-    const fetchCursos = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/cursos/todos', {
-          headers: { 'Authorization': `Bearer ${token}` }
+        // Obtener cursos
+        const cursosResponse = await fetch('http://localhost:3000/api/cursos/todos', {
+          headers: { 'Authorization': `Bearer ${token}` },
         });
-        const data = await response.json();
-        setCursos(data.data || []);
+        const cursosData = await cursosResponse.json();
+        setCursos(cursosData.data || []);
+
+        // Obtener instructores
+        const instructoresResponse = await fetch('http://localhost:3000/api/usuarios/instructores', {
+          headers: { 'Authorization': `Bearer ${token}` },
+        });
+        const instructoresData = await instructoresResponse.json();
+
+        // Crear un objeto para búsqueda rápida de instructores por ID
+        const instructoresMap = {};
+        instructoresData.data.data.forEach((instructor) => {
+          instructoresMap[instructor.id] = instructor.nombre;
+        });
+        setInstructores(instructoresMap);
       } catch (error) {
-        console.error('Error al obtener los cursos:', error.message);
+        console.error('Error al obtener los datos:', error.message);
       }
     };
 
-    fetchCursos();
+    fetchData();
   }, [token]);
+
+  const formatearFecha = (fecha) => {
+    const options = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    };
+    return new Date(fecha).toLocaleDateString('es-ES', options);
+  };
 
   const handleDelete = async (cursoId) => {
     const confirmDelete = window.confirm('¿Estás seguro de que deseas eliminar este curso?');
@@ -29,15 +54,15 @@ const CourseList = () => {
         const response = await fetch(`http://localhost:3000/api/cursos/${cursoId}`, {
           method: 'DELETE',
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         if (!response.ok) {
           throw new Error('Error al eliminar el curso');
         }
 
-        setCursos(cursos.filter(curso => curso.id !== cursoId));
+        setCursos(cursos.filter((curso) => curso.id !== cursoId));
         alert('Curso eliminado correctamente');
       } catch (error) {
         console.error('Error al eliminar el curso:', error.message);
@@ -47,14 +72,17 @@ const CourseList = () => {
 
   return (
     <div className="course-list-container">
-      <h1>Gestión de Cursos</h1>
+      <h1>Course Management</h1>
       <table className="course-table">
         <thead>
           <tr>
-            <th>Título</th>
-            <th>Descripción</th>
-            <th>Precio</th>
-            <th>Acciones</th>
+            <th>Title</th>
+            <th>Price</th>
+            <th>Category</th>
+            <th>Average Rating</th>
+            <th>Creation Date</th>
+            {tipoUsuario === '2' && <th>Instructor</th>}
+            {tipoUsuario === '2' && <th>Accions</th>}
           </tr>
         </thead>
         <tbody>
@@ -62,17 +90,24 @@ const CourseList = () => {
             cursos.map((curso) => (
               <tr key={curso.id}>
                 <td>{curso.titulo}</td>
-                <td>{curso.descripcion}</td>
                 <td>{curso.precio}</td>
-                <td>
-                  <Link to={`/cursos/editar/${curso.id}`} className="btn-edit">Editar</Link>
-                  <button onClick={() => handleDelete(curso.id)} className="btn-delete">Eliminar</button>
-                </td>
+                <td>{curso.categoria}</td>
+                <td>{curso.calificacion_promedio}</td>
+                <td>{formatearFecha(curso.fecha_creacion)}</td>
+                {tipoUsuario === '2' && (
+                  <>
+                    <td>{instructores[curso.instructor_id] || 'No asignado'}</td>
+                    <td>
+                      <Link to={`/cursos/editar/${curso.id}`} className="btn-edit">Editar</Link>
+                      <button onClick={() => handleDelete(curso.id)} className="btn-delete">Eliminar</button>
+                    </td>
+                  </>
+                )}
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="4">No se encontraron cursos</td>
+              <td colSpan={tipoUsuario === '2' ? 7 : 5}>No se encontraron cursos</td>
             </tr>
           )}
         </tbody>

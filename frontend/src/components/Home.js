@@ -119,12 +119,12 @@ const Home = () => {
       <header className="home-header">
         {/* Banner principal */}
         <div className="banner">
-          <h1 className="banner-title">Bienvenido a MaraLeSte</h1>
-          <p className="banner-subtitle">Tu plataforma de cursos de arte</p>
+          <h1 className="banner-title">Welcome to MaraLeSte</h1>
+          <p className="banner-subtitle">Your art course platform</p>
         </div>
 
         <div className="header-right">
-          <button className="btn-logout" onClick={handleLogout}>Cerrar Sesión</button>
+          <button className="btn-logout" onClick={handleLogout}>Log out</button>
         </div>
       </header>
       
@@ -136,26 +136,26 @@ const Home = () => {
           <div className="profile-info">
             <h2>{nombreUsuario}</h2>
             <p>{emailUsuario}</p>
-            <button className="btn-editar-datos" onClick={() => setIsEditing(true)}>Editar Perfil</button>
+            <button className="btn-editar-datos" onClick={() => setIsEditing(true)}>Profile edit</button>
           </div>
         </div>
 
         {isEditing && (
           <form onSubmit={handleSaveProfile} className="edit-profile-form">
-            <h3>Editar Perfil</h3>
-            <label>Nombre:</label>
+            <h3>Profile edit</h3>
+            <label>Name:</label>
             <input 
               type="text" 
               value={newNombre} 
               onChange={(e) => setNewNombre(e.target.value)} 
             />
-            <label>Correo:</label>
+            <label>Email:</label>
             <input 
               type="email" 
               value={newCorreo} 
               onChange={(e) => setNewCorreo(e.target.value)} 
             />
-            <label>Imagen de Perfil:</label>
+            <label>Profile picture:</label>
             <input 
               type="file" 
               onChange={handleImageChange} 
@@ -167,33 +167,33 @@ const Home = () => {
 
         {/* Botones de navegación */}
         <aside className="buttons-container">
-          <button className="btn btn-crearcurso" onClick={() => navigate('/crear-curso')}>Crear Cursos</button>
-          <button className="btn btn-info" onClick={() => navigate('/lista-cursos')}>Lista de Cursos</button>
-          <button className="btn btn-warning" onClick={() => navigate('/user-management')}>Gestionar Usuarios</button>
-          <button className="btn btn-evaluaciones" onClick={() => navigate('/crear-evaluaciones')}>Crear Evaluaciones</button>
+          <button className="btn btn-crearcurso" onClick={() => navigate('/crear-curso')}>Create Courses</button>
+          <button className="btn btn-info" onClick={() => navigate('/lista-cursos')}>Course List</button>
+          <button className="btn btn-warning" onClick={() => navigate('/user-management')}>Manage Users</button>
+          <button className="btn btn-evaluaciones" onClick={() => navigate('/crear-evaluaciones')}>Create Assessment</button>
           <button className="btn btn-light" onClick={() => navigate('/contacto')}>Contactar</button>
         </aside>
 
         {/* Sección de cursos */}
         <section className="content-section">
-          <h2>Cursos Disponibles</h2>
-          <p>Explora nuestros cursos y mejora tus habilidades artísticas.</p>
+          <h2>Available Courses</h2>
+          <p>Explore our courses and improve your artistic skills.</p>
           {isLoading ? (
-            <p>Cargando cursos...</p>
+            <p>Loading Courses...</p>
           ) : cursos.length > 0 ? (
             <div className="cursos-list">
               {cursos.map(curso => (
                 <div className="curso-card" key={curso.id} onClick={() => navigate(`/cursos/${curso.id}`)}>
                   <h3>{curso.titulo}</h3>
                   <p>{curso.descripcion}</p>
-                  <p>Categoria: {curso.categoria}</p>
-                  <p>Nivel: {curso.nivel}</p>
-                  <p>Precio: ${curso.precio}</p>
+                  <p>Category: {curso.categoria}</p>
+                  <p>Level: {curso.nivel}</p>
+                  <p>Price: ${curso.precio}</p>
                 </div>
               ))}
             </div>
           ) : (
-            <p>No hay cursos disponibles en este momento.</p>
+            <p>There are no courses available at this time.</p>
           )}
         </section>
       </div>

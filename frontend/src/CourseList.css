@@ -1,82 +1,198 @@
 .course-list-container {
-    padding: 20px;
-    background-color: #f5f5f5;
-    border-radius: 8px;
-    max-width: 1000px;
-    margin: 20px auto;
-  }
-  
-  .course-list-container h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
+  padding: 2rem;
+  background-color: #f8fafc;
+  border-radius: 1rem;
+  max-width: 1200px;
+  margin: 2rem auto;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.course-list-container h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #1e293b;
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+.course-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background-color: white;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.course-table th {
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 2px solid #2563eb;
+}
+
+.course-table td {
+  padding: 1rem;
+  color: #4b5563;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.95rem;
+  text-align: left;
+  vertical-align: middle;
+}
+
+/* Remove bottom border from last row */
+.course-table tr:last-child td {
+  border-bottom: none;
+}
+
+.course-table tbody tr {
+  transition: all 0.2s ease-in-out;
+}
+
+.course-table tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+/* Alternating row colors */
+.course-table tbody tr:nth-child(even) {
+  background-color: #f8fafc;
+}
+
+.btn-edit, .btn-delete {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.btn-edit {
+  background-color: #3b82f6;
+  color: white;
+  margin-right: 0.75rem;
+  border: 1px solid transparent;
+}
+
+.btn-edit:hover {
+  background-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+.btn-delete {
+  background-color: #ef4444;
+  color: white;
+  border: 1px solid transparent;
+}
+
+.btn-delete:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
+}
+
+/* Actions column styling */
+.course-table td:last-child {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-start;
+  padding: 0.75rem 1rem;
+}
+
+/* Agregar estos estilos a tu archivo CourseList.css */
+
+.admin-controls {
+  margin-bottom: 20px;
+  padding: 10px 0;
+}
+
+.btn-create {
+  background-color: #28a745;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+.btn-create:hover {
+  background-color: #218838;
+}
+
+.btn-view {
+  background-color: #17a2b8;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-view:hover {
+  background-color: #138496;
+}
+
+.acciones-column {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* Ajustar estilos existentes de los botones */
+.btn-edit, .btn-delete {
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-edit {
+  background-color: #ffc107;
+  color: #000;
+  text-decoration: none;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+}
+
+.btn-edit:hover {
+  background-color: #e0a800;
+}
+
+.btn-delete:hover {
+  background-color: #c82333;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+  .course-list-container {
+    padding: 1rem;
+    margin: 1rem;
   }
   
   .course-table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: white;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
   }
-  
-  .course-table th, .course-table td {
-    padding: 12px;
-    border: 1px solid #ccc;
-    text-align: center;
-  }
-  
-  .course-table th {
-    background-color: #4CAF50;
-    color: white;
-    font-weight: bold;
-  }
-  
-  .course-table td {
-    color: #555;
-  }
-  
-  .btn-edit {
-    padding: 8px 12px;
-    background-color: #2196F3;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-right: 10px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .btn-edit:hover {
-    background-color: #1976D2;
-  }
-  
-  .btn-delete {
-    padding: 8px 12px;
-    background-color: #f44336;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .btn-delete:hover {
-    background-color: #d32f2f;
-  }
-  
-  .course-table td button {
-    margin: 0 5px;
-  }
-  
-  .course-table tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-  
-  .course-table tr:hover {
-    background-color: #ddd;
-  }
-  
-  .course-table td:last-child {
-    display: flex;
-    justify-content: center;
-  }
-  
+}
+
+/* Empty state styling */
+.course-table tr:only-child td {
+  text-align: center;
+  padding: 2rem;
+  color: #6b7280;
+  font-style: italic;
+}
