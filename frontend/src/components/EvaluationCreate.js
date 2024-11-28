@@ -210,7 +210,7 @@ const EvaluationCreate = () => {
 
       setMensajeExito('Evaluación creada exitosamente');
       setTimeout(() => {
-        navigate('/evaluaciones');
+        navigate('/home');
       }, 2000);
 
     } catch (error) {

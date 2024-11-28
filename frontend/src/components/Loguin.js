@@ -75,8 +75,8 @@ const Loguin = ({ onLogin }) => {
   
     try {
       const url = registrando
-        ? 'http://localhost:3000/api/usuarios'
-        : 'http://localhost:3000/api/usuarios/login';
+        ? 'https://b8fc-186-80-54-78.ngrok-free.app/api/usuarios'
+        : 'https://b8fc-186-80-54-78.ngrok-free.app/api/usuarios/login';
   
       const bodyData = registrando
         ? { nombre, correo: email, contrasena: password, tipo_usuario_id: 1 }
@@ -114,7 +114,7 @@ const Loguin = ({ onLogin }) => {
 
   const handlePasswordRecovery = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/usuarios/password-recovery', {
+      const response = await fetch('https://b8fc-186-80-54-78.ngrok-free.app/api/usuarios/password-recovery', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ correo: email }),
@@ -138,7 +138,7 @@ const Loguin = ({ onLogin }) => {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/usuarios/reset-password', {
+      const response = await fetch('https://b8fc-186-80-54-78.ngrok-free.app/api/usuarios/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ correo: email, codigo: recoveryCode, nuevaContrasena: newPassword }),
@@ -156,7 +156,7 @@ const Loguin = ({ onLogin }) => {
 
   const handleVerifyEmail = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/usuarios/verify', {
+      const response = await fetch('https://b8fc-186-80-54-78.ngrok-free.app/api/usuarios/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ correo: email, codigo: verificationCode }),

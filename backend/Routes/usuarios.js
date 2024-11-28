@@ -271,6 +271,25 @@ router.get('/alumnos', async (req, res) => {
 });
 
 
+router.get('/historial-compras/:usuario_id', async (req, res) => {
+    const { usuario_id } = req.params;
 
+    if (!usuario_id || isNaN(Number(usuario_id))) {
+        return sendResponse(res, 400, 'El ID de usuario es obligatorio y debe ser un número válido.');
+    }
+    try {
+        const resultados = await usuario.obtenerHistorialCompras(usuario_id);
+        if (resultados.error) {
+            return sendResponse(res, 404, resultados.error);
+        }
+        if (resultados.length === 0) {
+            return sendResponse(res, 200, 'El usuario no tiene historial de compras.', []);
+        }
+        return sendResponse(res, 200, 'Historial de compras obtenido correctamente.', resultados);
+    } catch (error) {
+        console.error('Error completo al obtener historial de compras:', error.stack || error.message);
+        return sendResponse(res, 500, 'Ocurrió un error interno al obtener el historial de compras.');
+    }
+});
 
 module.exports = router;

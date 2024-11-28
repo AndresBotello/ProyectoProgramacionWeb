@@ -1,0 +1,39 @@
+.payment-result {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .success {
+    background-color: #e6ffe6;
+    color: #006600;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .failure {
+    background-color: #ffe6e6;
+    color: #660000;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .pending {
+    background-color: #fff3e6;
+    color: #663300;
+    padding: 20px;
+    border-radius: 8px;
+  }
+  
+  .payment-result h2 {
+    margin-bottom: 15px;
+    font-size: 24px;
+  }
+  
+  .payment-result p {
+    font-size: 16px;
+    margin-bottom: 0;
+  }

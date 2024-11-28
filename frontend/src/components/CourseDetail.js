@@ -211,10 +211,10 @@ const CourseDetail = () => {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          usuario_id: parseInt(usuario_id), // Asegurarse de que usuario_id sea un número
-          curso_id: parseInt(courseId),     // Asegurarse de que courseId sea un número
-          calificacion: parseInt(rating),   // Asegurarse de que rating sea un número
-          comentario: comment.trim() || null  // Eliminar espacios en blanco innecesarios
+          usuario_id: parseInt(usuario_id), 
+          curso_id: parseInt(courseId),     
+          calificacion: parseInt(rating),   
+          comentario: comment.trim() || null  
         })
       });
 
@@ -575,6 +575,7 @@ const CourseDetail = () => {
               <h1>{curso.titulo}</h1>
               <p>{curso.descripcion}</p>
               <p><strong>Contenido:</strong> {curso.contenido}</p>
+              
               <p><strong>Precio:</strong> ${curso.precio}</p>
             </div>
 

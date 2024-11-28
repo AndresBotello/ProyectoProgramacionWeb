@@ -18,16 +18,15 @@ const CourseList = () => {
         const cursosData = await cursosResponse.json();
         setCursos(cursosData.data || []);
 
-        // Obtener instructores
         const instructoresResponse = await fetch('http://localhost:3000/api/usuarios/instructores', {
           headers: { 'Authorization': `Bearer ${token}` },
         });
         const instructoresData = await instructoresResponse.json();
 
-        // Crear un objeto para búsqueda rápida de instructores por ID
+      
         const instructoresMap = {};
         instructoresData.data.data.forEach((instructor) => {
-          instructoresMap[instructor.id] = instructor.nombre;
+          instructoresMap[instructor.id] = instructor.tipo;
         });
         setInstructores(instructoresMap);
       } catch (error) {

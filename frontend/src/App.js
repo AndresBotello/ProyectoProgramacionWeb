@@ -16,7 +16,7 @@ import CourseList from './components/CourseList';
 import EditCourse from './components/EditCourse';
 import EvaluationCreate from './components/EvaluationCreate';
 import UsuariosListIns from './components/UsuariosListIns';
-
+import PaymentSuccess from './components/PaymentSuccess';
 
 function App() {
   const [usuario, setUsuario] = useState(null);
@@ -96,6 +96,12 @@ function App() {
           <Route path="/user-access" element={
             <ProtectedRoute usuario={usuario} requiredRole="1">
               <UserAccessForm />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/payment-result" element={
+            <ProtectedRoute usuario={usuario} requiredRole="1">
+              <PaymentSuccess />
             </ProtectedRoute>
           } />
 

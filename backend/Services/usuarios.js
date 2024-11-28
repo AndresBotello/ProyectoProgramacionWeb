@@ -320,13 +320,68 @@ const obtenerPuntosPorInstructor = async (instructor_id) => {
     }
 };
 
-// Método para obtener todos los alumnos
-// Obtener solo los usuarios con el rol de Instructor
+
 async function obtenerAlumnos() {
     const rows = await db.query('SELECT * FROM usuarios WHERE tipo_usuario_id = ?', [1]); // Asegúrate de que el 3 es el tipo_usuario_id para instructores
     const data = emptyOrRows(rows);
     return { data };
 }
+
+async function obtenerHistorialCompras(usuario_id) {
+    const connection = await db.pool.getConnection();
+    try {
+       
+        const query = `
+            SELECT 
+                hc.id, 
+                hc.usuario_id, 
+                hc.curso_id, 
+                hc.fecha, 
+                hc.payment_id,
+                c.titulo AS curso_titulo,
+                c.descripcion AS curso_descripcion,
+                c.precio AS curso_precio
+            FROM 
+                historial_compras hc
+            JOIN 
+                cursos c ON hc.curso_id = c.id
+            WHERE 
+                hc.usuario_id = ?
+            ORDER BY 
+                hc.fecha DESC
+        `;
+
+        const [resultados] = await connection.query(query, [usuario_id]);
+
+        if (resultados.length === 0) {
+            return { error: `No se encontró historial de compras para el usuario con ID ${usuario_id}.` };
+        }
+
+        // Procesar los datos si es necesario antes de devolverlos
+        const historial = resultados.map((compra) => ({
+            id: compra.id,
+            usuario_id: compra.usuario_id,
+            curso_id: compra.curso_id,
+            fecha: compra.fecha,
+            payment_id: compra.payment_id,
+            curso: {
+                titulo: compra.curso_titulo,
+                descripcion: compra.curso_descripcion,
+                precio: compra.curso_precio,
+            },
+        }));
+
+        return { historial };
+    } catch (error) {
+        console.error('Error en obtenerHistorialCompras:', error.message);
+        return { error: 'Error al obtener el historial de compras.' };
+    } finally {
+        
+        connection.release();
+    }
+}
+
+
 
 
 module.exports = {
@@ -344,5 +399,6 @@ module.exports = {
     obtenerPuntosPorInstructor,
     verificarCodigo,
     obtenerAlumnos,
+    obtenerHistorialCompras,
     eliminarUsuario
 };

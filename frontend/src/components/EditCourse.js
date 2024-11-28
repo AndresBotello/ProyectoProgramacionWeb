@@ -57,7 +57,7 @@ const EditCourse = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:3000/api/cursos/${id}`, {
+      const response = await fetch(`https://b8fc-186-80-54-78.ngrok-free.app/api/cursos/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

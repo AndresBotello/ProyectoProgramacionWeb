@@ -163,7 +163,7 @@ const CourseCreate = () => {
 
       setMensajeExito('Curso y lecciones creados correctamente');
       setTimeout(() => {
-        navigate('/cursos');
+        navigate('/home');
       }, 2000);
 
     } catch (error) {

@@ -14,6 +14,7 @@ const evaluacionesRouter = require("./Routes/Evaluaciones");
 const notificacionesRouter = require("./Routes/Notificaciones");
 const mensajeriaRouter = require("./Routes/Mensajeria");
 const certificarRouter = require("./Routes/Certificarse");
+const pagoRouter = require("./Routes/PagarCursos");
 
 const port = process.env.PORT || 3000;
 
@@ -27,9 +28,11 @@ app.use(
 
 var corsOptions = {
     origin: [
-        "http://localhost:3001"
+        "http://localhost:3001",
+        "https://b8fc-186-80-54-78.ngrok-free.app"
     ],
     optionsSuccessStatus: 200,
+    credentials: true
 };
 
 app.use(cors(corsOptions));
@@ -50,6 +53,7 @@ app.use("/api/evaluaciones", evaluacionesRouter);
 app.use("/api/notificaciones", notificacionesRouter);
 app.use("/api/mensajeria", mensajeriaRouter);
 app.use("/api/certificar", certificarRouter);
+app.use("/api/pagar", pagoRouter);
 
 
 
